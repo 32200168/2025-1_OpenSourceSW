@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha512-yH8UO2mYc8aYOfk09UqZqKhEYQKQZXhHR+8Ij+4C8bdR5MHTKMZmqz6UwYy8KnChY9J49S+nUtT/jv3+j/M1cA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4" style="font-family: 'Noto Sans KR', sans-serif;">
+
+  <div class="max-w-md w-full bg-white/10 backdrop-blur-lg rounded-xl p-8 shadow-2xl">
+
+    <!-- Header Section -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-white mb-2">PLISTORY</h1>
+      <p class="text-gray-200">Sign in to your account</p>
+    </div>
+
+    <!-- Form Section -->
+    <form method="post" action="/users/login/" class="space-y-6">
+      {% csrf_token %}
+      <div>
+        <label class="block text-gray-200 text-sm font-medium mb-2">Username</label>
+        <input name="username" type="text" class="w-full px-4 py-3 bg-white/20 border border-gray-200/20 rounded-lg focus:ring-2 focus:ring-white/50 focus:outline-none text-white placeholder-gray-300" placeholder="Enter your username">
+      </div>
+
+      <div>
+        <label class="block text-gray-200 text-sm font-medium mb-2">Password</label>
+        <input name="password" type="password" class="w-full px-4 py-3 bg-white/20 border border-gray-200/20 rounded-lg focus:ring-2 focus:ring-white/50 focus:outline-none text-white placeholder-gray-300" placeholder="Enter your password">
+      </div>
+
+      <button type="submit"
+        class="w-full py-3 px-4 text-white rounded-lg font-medium hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-white/50 transition-colors"
+        style="background-color: #744eff;">
+        Sign In
+      </button>
+    </form>
+
+    <!-- Sign Up Link -->
+    <p class="mt-8 text-center text-sm text-gray-200">
+      아직 계정이 없다면?
+      <a href="/users/signup/" class="font-medium text-white hover:text-gray-100">회원가입</a>
+    </p>
+  </div>
+
+</body>
+</html>
