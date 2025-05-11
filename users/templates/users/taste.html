@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,160 +11,241 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     integrity="sha512-yH8UO2mYc8aYOfk09UqZqKhEYQKQZXhHR+8Ij+4C8bdR5MHTKMZmqz6UwYy8KnChY9J49S+nUtT/jv3+j/M1cA=="
     crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
+    referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+
 </head>
-<body class="min-h-screen w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4" style="font-family: 'Noto Sans KR', sans-serif;">
+<body class="min-h-screen w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4" style="font-family: 'Noto Sans KR', sans-serif;">
+  <div class="flex flex-col items-center justify-center min-h-[90vh]">
+        <div class="text-center mb-10">
+        <i class="fas fa-music" style="color: white; font-size: 5em;"></i>
+            <p class="mt-5 text-3xl font-bold text-white tracking-tighter" style="letter-spacing: -0.1em;">
+                <span class="inline-block animate-[wave_2s_ease-in-out_infinite]" style="animation: wave 2s ease-in-out infinite;">나</span>
+                <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.1s]" style="animation: wave 2s ease-in-out infinite 0.1s;">의</span>
+                <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.2s]" style="animation: wave 2s ease-in-out infinite 0.2s;"> </span>
+                <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.3s]" style="animation: wave 2s ease-in-out infinite 0.3s;">음</span>
+                <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.4s]" style="animation: wave 2s ease-in-out infinite 0.4s;">악</span>
+                <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.5s]" style="animation: wave 2s ease-in-out infinite 0.5s;"> </span>
+                <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.6s]" style="animation: wave 2s ease-in-out infinite 0.6s;">취</span>
+                <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.7s]" style="animation: wave 2s ease-in-out infinite 0.7s;">향</span>
+                <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.8s]" style="animation: wave 2s ease-in-out infinite 0.8s;">은</span>
+                <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.9s]" style="animation: wave 2s ease-in-out infinite 0.9s;">?</span>            
+            </p>
+            <style>
+                @keyframes wave {
+                    30%, 70% { transform: translateY(0); }
+                    50% { transform: translateY(-15px); }
+                }
+            </style>
+            <p class="mt-2 text-gray-200">당신을 취향을 모두 골라보세요!</p>
+        </div>
 
-    <div class="flex flex-wrap gap-2 justify-center">
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-pink-500 to-purple-500">
-        #K-POP
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-green-400 to-blue-500">
-        #랩/힙합
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-yellow-400 to-red-500">
-        #공부할때듣기좋은
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-indigo-400 via-purple-400 to-pink-500">
-        #인디
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-blue-300 via-cyan-400 to-teal-500">
-        #차분한
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-rose-400 via-pink-400 to-amber-400">
-        #잔잔한
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-violet-300 via-purple-400 to-pink-400">
-        #몽환적인
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-zinc-400 via-gray-500 to-slate-600">
-        #하우스
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-pink-400 via-yellow-300 to-green-300">
-        #락
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-fuchsia-500 via-violet-500 to-cyan-500">
-        #R&B
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-pink-400 via-rose-500 to-red-500">
-        #어쿠스틱
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-cyan-400 via-sky-400 to-blue-500">
-        #신나는
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-lime-400 via-green-400 to-emerald-400">
-        #강렬한
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-zinc-400 via-gray-500 to-slate-600">
-        #재즈
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-yellow-400 via-amber-500 to-orange-500">
-        #OST
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-blue-500 via-purple-500 to-pink-500">
-        #트로트
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-pink-400 via-rose-500 to-red-500">
-        #리드미컬한
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-lime-400 via-emerald-400 to-green-500">
-        #EDM
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-pink-400 via-yellow-300 to-green-300">
-        #펑키한
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-pink-500 to-purple-500">
-        #로맨틱한
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-cyan-400 via-sky-400 to-blue-500">
-        #부드러운
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-green-400 to-blue-500">
-        #랩/힙합
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-yellow-400 to-red-500">
-        #발라드
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-indigo-400 via-purple-400 to-pink-500">
-        #에너제틱
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-blue-300 via-cyan-400 to-teal-500">
-        #여유로운
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-rose-400 via-pink-400 to-amber-400">
-        #수능금지곡
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-violet-300 via-purple-400 to-pink-400">
-        #새벽감성
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-zinc-400 via-gray-500 to-slate-600">
-        #크리스마스
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-lime-400 via-emerald-400 to-green-500">
-        #카페분위기
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-fuchsia-500 via-violet-500 to-cyan-500">
-        #감성적인
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-pink-400 via-rose-500 to-red-500">
-        #드라이브
-    </span>
-    <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
-            data-gradient="from-cyan-400 via-sky-400 to-blue-500">
-        #시티팝
-    </span>
+    <!-- 해시태그 -->
+    <form id="tasteForm" method="POST" action="/users/firstPL/">
+          {% csrf_token %}
+        <div class="flex flex-wrap gap-2 justify-center">
+            <input type="checkbox" name="hashtags" value="K-POP" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-pink-500 to-purple-500">
+                #K-POP
+            </span>
+            <input type="checkbox" name="hashtags" value="랩/힙합" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-green-400 to-blue-500">
+                #랩/힙합
+            </span>
+            <input type="checkbox" name="hashtags" value="공부할때듣기좋은" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-yellow-400 to-red-500">
+                #공부할때듣기좋은
+            </span>
+            <input type="checkbox" name="hashtags" value="인디" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-indigo-400 via-purple-400 to-pink-500">
+                #인디
+            </span>
+            <input type="checkbox" name="hashtags" value="차분한" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-blue-300 via-cyan-400 to-teal-500">
+                 #차분한
+            </span>
+            <input type="checkbox" name="hashtags" value="잔잔한" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-rose-400 via-pink-400 to-amber-400">
+                #잔잔한
+            </span>
+            <input type="checkbox" name="hashtags" value="몽환적인" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-violet-300 via-purple-400 to-pink-400">
+                #몽환적인
+            </span>
+            <input type="checkbox" name="hashtags" value="하우스" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-zinc-400 via-gray-500 to-slate-600">
+                #하우스
+            </span>
+            <input type="checkbox" name="hashtags" value="락" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-pink-400 via-yellow-300 to-green-300">
+                #락
+            </span>
+            <input type="checkbox" name="hashtags" value="R&B" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-fuchsia-500 via-violet-500 to-cyan-500">
+                #R&B
+            </span>
+            <input type="checkbox" name="hashtags" value="어쿠스틱" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-pink-400 via-rose-500 to-red-500">
+                #어쿠스틱
+            </span>
+            <input type="checkbox" name="hashtags" value="신나는" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-cyan-400 via-sky-400 to-blue-500">
+                #신나는
+            </span>
+            <input type="checkbox" name="hashtags" value="강렬한" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-lime-400 via-green-400 to-emerald-400">
+                #강렬한
+            </span>
+            <input type="checkbox" name="hashtags" value="재즈" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-slate-600 via-gray-500 to-zinc-400">
+                #재즈
+            </span>
+            <input type="checkbox" name="hashtags" value="OST" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-yellow-400 via-amber-500 to-orange-500">
+                #OST
+            </span>
+            <input type="checkbox" name="hashtags" value="밴드" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-blue-500 via-purple-500 to-pink-500">
+                #밴드
+            </span>
+            <input type="checkbox" name="hashtags" value="리드미컬한" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-pink-400 via-rose-500 to-red-500">
+                #리드미컬한
+            </span>
+            <input type="checkbox" name="hashtags" value="EDM" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-lime-400 via-emerald-400 to-green-500">
+                #EDM
+            </span>
+            <input type="checkbox" name="hashtags" value="펑키한" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-indigo-400 via-purple-400 to-pink-500">
+                #펑키한
+            </span>
+            <input type="checkbox" name="hashtags" value="로맨틱한" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-pink-500 to-purple-500">
+                #로맨틱한
+            </span>
+            <input type="checkbox" name="hashtags" value="부드러운" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-cyan-400 via-sky-400 to-blue-500">
+                #부드러운
+            </span>
+            <input type="checkbox" name="hashtags" value="랩/힙합" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-yellow-400 to-red-500">
+                #랩/힙합
+            </span>
+            <input type="checkbox" name="hashtags" value="발라드" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-green-400 to-blue-500">
+                #발라드
+            </span>
+            <input type="checkbox" name="hashtags" value="에너제틱" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-pink-400 via-yellow-300 to-green-300">
+                #에너제틱
+            </span>
+            <input type="checkbox" name="hashtags" value="여유로운" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-blue-300 via-cyan-400 to-teal-500">
+                #여유로운
+            </span>
+            <input type="checkbox" name="hashtags" value="수능금지곡" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-rose-400 via-pink-400 to-amber-400">
+                #수능금지곡
+            </span>
+            <input type="checkbox" name="hashtags" value="새벽감성" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-violet-300 via-purple-400 to-pink-400">
+                #새벽감성
+            </span>
+            <input type="checkbox" name="hashtags" value="크리스마스" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-zinc-400 via-gray-500 to-slate-600">
+                #크리스마스
+            </span>
+            <input type="checkbox" name="hashtags" value="카페분위기" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-lime-400 via-emerald-400 to-green-500">
+                #카페분위기
+            </span>
+            <input type="checkbox" name="hashtags" value="감성적인" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-fuchsia-500 via-violet-500 to-cyan-500">
+                #감성적인
+            </span>
+            <input type="checkbox" name="hashtags" value="드라이브" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-pink-400 via-rose-500 to-red-500">
+                #드라이브
+            </span>
+            <input type="checkbox" name="hashtags" value="시티팝" hidden>
+            <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
+                data-gradient="from-cyan-400 via-sky-400 to-blue-500">
+                #시티팝
+            </span>
+        </div>
+    <div class="text-center mt-6"><button type="submit" class="mt-10 font-semibold text-white text-xl">저장하기</button></div>
+    </form>
+  </div>
+     
+<footer class="fixed bottom-0 left-0 w-full bg-black bg-opacity-30 text-white px-6 py-3">
+  <div class="flex justify-between items-center">
+    <p class="text-sm text-gray-200 text-center flex-1">PL 생성 1/3</p>
     </div>
+</footer>
 
-    <script>
-    document.querySelectorAll(".tag").forEach(el => {
-        const gradientClasses = el.dataset.gradient.split(" ");
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const tags = document.querySelectorAll(".tag");
+  const checkboxes = document.querySelectorAll('input[type="checkbox"][name="hashtags"]');
+  const form = document.getElementById("tasteForm");
 
-        el.addEventListener("click", () => {
-        const isActive = el.classList.contains("bg-gradient-to-r");
-
-        // 모든 배경 관련 클래스 제거
-        el.classList.remove("bg-white", "bg-opacity-30", "bg-gradient-to-r", ...gradientClasses);
-
-        if (!isActive) {
-            el.classList.add("bg-gradient-to-r", ...gradientClasses);
-        } else {
-            el.classList.add("bg-white", "bg-opacity-30");
-        }
-        });
+  tags.forEach((tag, index) => {
+    const checkbox = checkboxes[index];
+    const gradient = tag.dataset.gradient.split(" ");
+    tag.addEventListener("click", () => {
+      const isActive = tag.classList.contains("bg-gradient-to-r");
+      tag.classList.remove("bg-white", "bg-opacity-30", "bg-gradient-to-r", ...gradient);
+      if (!isActive) {
+        tag.classList.add("bg-gradient-to-r", ...gradient);
+      } else {
+        tag.classList.add("bg-white", "bg-opacity-30");
+      }
+      checkbox.checked = !isActive;
     });
-    </script>
+  });
+
+  form.addEventListener("submit", function (e) {
+    const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+    if (selectedCount < 3) {
+      e.preventDefault();
+      alert("최소 3개의 해시태그를 선택해주세요.");
+    }
+  });
+});
+</script>
+
 </body>
 </html>

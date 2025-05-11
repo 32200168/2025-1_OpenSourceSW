@@ -15,7 +15,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("home")  # 로그인 성공 시 이동할 페이지
+            return redirect("")  # 로그인 성공 시 이동할 페이지 어디로???
         else:
             messages.error(request, "Invalid username or password")
 
@@ -34,8 +34,13 @@ def signup_view(request):
 
     return render(request, 'users/signup.html')
 
+
 def taste_view(request):
-    if request.method == 'POST':
-        tags = request.POST.get('selected_tags', '')
-        tag_list = tags.split(',') if tags else [] # 선택한 태그를 리스트로 저장
-    return render(request, 'users/taste.html') # 다음에 이동할 페이지
+    if request.method == "POST":
+        tags = request.POST.getlist("hashtags")
+        print("선택된 태그:", tags)  # 로그 확인용
+        return redirect("/users/firstPL/")
+    return render(request, "users/taste.html")
+
+def firstPL_view(request):
+    return render(request, "users/firstPL.html") # 다음으로 어디로???
