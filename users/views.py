@@ -15,7 +15,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("")  # 로그인 성공 시 이동할 페이지 어디로???
+            return redirect("main")
         else:
             messages.error(request, "Invalid username or password")
 
@@ -42,5 +42,5 @@ def taste_view(request):
         return redirect("/users/firstPL/")
     return render(request, "users/taste.html")
 
-def firstPL_view(request):
-    return render(request, "users/firstPL.html") # 다음으로 어디로???
+def playlist_view(request):
+    return render(request, "users/playlist.html") # 다음으로 어디로???

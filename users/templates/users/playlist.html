@@ -1,48 +1,58 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plistory</title>
+  <title>Plistory - Playlist</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    integrity="sha512-yH8UO2mYc8aYOfk09UqZqKhEYQKQZXhHR+8Ij+4C8bdR5MHTKMZmqz6UwYy8KnChY9J49S+nUtT/jv3+j/M1cA=="
     crossorigin="anonymous"
-    referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-
+  />
 </head>
-<body class="min-h-screen w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4" style="font-family: 'Noto Sans KR', sans-serif;">
-  <div class="flex flex-col items-center justify-center min-h-[90vh]">
-        <div class="text-center mb-10">
-            <i class="fas fa-music" style="color: white; font-size: 5em;"></i>
-                <p class="mt-5 text-3xl font-bold text-white tracking-tighter" style="letter-spacing: -0.1em;">
-                    <span class="inline-block animate-[wave_2s_ease-in-out_infinite]" style="animation: wave 2s ease-in-out infinite;">나</span>
-                    <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.1s]" style="animation: wave 2s ease-in-out infinite 0.1s;">의</span>
-                    <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.2s]" style="animation: wave 2s ease-in-out infinite 0.2s;"> </span>
-                    <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.3s]" style="animation: wave 2s ease-in-out infinite 0.3s;">음</span>
-                    <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.4s]" style="animation: wave 2s ease-in-out infinite 0.4s;">악</span>
-                    <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.5s]" style="animation: wave 2s ease-in-out infinite 0.5s;"> </span>
-                    <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.6s]" style="animation: wave 2s ease-in-out infinite 0.6s;">취</span>
-                    <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.7s]" style="animation: wave 2s ease-in-out infinite 0.7s;">향</span>
-                    <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.8s]" style="animation: wave 2s ease-in-out infinite 0.8s;">은</span>
-                    <span class="inline-block animate-[wave_2s_ease-in-out_infinite_0.9s]" style="animation: wave 2s ease-in-out infinite 0.9s;">?</span>            
-                </p>
-                <style>
-                    @keyframes wave {
-                        30%, 70% { transform: translateY(0); }
-                        50% { transform: translateY(-15px); }
-                    }
-                </style>
-                <p class="mt-2 text-gray-200">당신을 취향을 모두 골라보세요!</p>
-        </div>
 
-    <!-- 해시태그 -->
-    <form id="tasteForm" method="POST" action="/users/playlist/">
+
+<body class="min-h-screen w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4 text-white font-sans" style="font-family: 'Noto Sans KR', sans-serif;">
+  <div class="text-center mt-10 mb-10">
+    <i class="fas fa-music" style="color: white; font-size: 4em;"></i>
+    <p class="mt-5 text-gray-100">첫 번째 플레이리스트를 만들어보세요!</p>
+  </div>
+  
+<div class="max-w-3xl mx-auto bg-white/10 backdrop-blur-l rounded-xl p-6 shadow-2xl border border-white">
+  <!-- Editable Playlist Title + Save Button -->
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center space-x-2">
+      <i class="fas fa-pencil-alt text-white"></i>
+      <input id="playlistName" type="text" value="My First Playlist" class="bg-transparent border-white text-white font-semibold text-lg focus:outline-none focus:border-white" />
+    </div>
+  </div> <!-- 태그 선택에 연결해야됨!!!-->
+
+    <!-- Search Box -->
+    <div class="relative w-full max-w-full mb-6" id="searchableSelect">
+      <button class="w-full p-3 text-left text-white bg-white/10 border-2 border-gray-200 rounded-lg focus:ring-white flex items-center justify-between" id="selectButton">
+        <span id="selectedText">Search Music</span>
+        <svg class="w-4 h-4 text-white transition-transform duration-200" fill="none" id="selectArrow" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+        </svg>
+      </button>
+      <div class="absolute hidden w-full mt-1 bg-[#2d2d2d]/90 border border-gray-300 rounded-lg shadow-lg z-10" id="dropdownMenu">
+        <div class="p-2">
+          <input id="searchInput" type="text" placeholder="곡명 또는 아티스트" class="w-full p-2 text-sm text-white placeholder-white bg-[#2d2d2d]/70 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-white" />
+        </div>
+        <ul class="max-h-60 overflow-y-auto py-1" id="optionsList"></ul>
+      </div>
+    </div>
+
+    <!-- Playlist -->
+    <ul id="playlistBox" class="space-y-1 border border-white rounded-lg p-2"></ul>
+  </div>
+
+  <!-- 해시태그 -->
+  <div class="text-lg text-center mt-10"><h2>이 플레이리스트를 표현한다면?</h2></div>  
+    <form id="tasteForm" class="mt-5" method="POST" action="/users/playlist/">
           {% csrf_token %}
         <div class="flex flex-wrap gap-2 justify-center">
             <input type="checkbox" name="hashtags" value="K-POP" hidden>
@@ -206,46 +216,135 @@
                 #시티팝
             </span>
         </div>
-    <div class="text-center mt-5"><button type="submit" class="mt-10 font-semibold text-white text-xl">저장하기</button></div>
+    <div class="text-center mt-3 mb-20"><button type="submit" class="mt-10 font-semibold text-white text-xl">저장하기</button></div>
     </form>
   </div>
-     
-<footer class="fixed bottom-0 left-0 w-full bg-black bg-opacity-30 text-white px-6 py-3">
-  <div class="flex justify-between items-center">
-    <p class="text-sm text-gray-200 text-center flex-1">계정 생성 1/2</p>
-    </div>
-</footer>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const tags = document.querySelectorAll(".tag");
-  const checkboxes = document.querySelectorAll('input[type="checkbox"][name="hashtags"]');
-  const form = document.getElementById("tasteForm");
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const selectButton = document.getElementById('selectButton');
+      const dropdownMenu = document.getElementById('dropdownMenu');
+      const searchInput = document.getElementById('searchInput');
+      const optionsList = document.getElementById('optionsList');
+      const selectedText = document.getElementById('selectedText');
+      const selectArrow = document.getElementById('selectArrow');
+      const playlistBox = document.getElementById('playlistBox');
 
-  tags.forEach((tag, index) => {
-    const checkbox = checkboxes[index];
-    const gradient = tag.dataset.gradient.split(" ");
-    tag.addEventListener("click", () => {
-      const isActive = tag.classList.contains("bg-gradient-to-r");
-      tag.classList.remove("bg-white", "bg-opacity-30", "bg-gradient-to-r", ...gradient);
-      if (!isActive) {
-        tag.classList.add("bg-gradient-to-r", ...gradient);
-      } else {
-        tag.classList.add("bg-white", "bg-opacity-30");
+      const options = [
+        { id: 1, title: '노래 제목 A', artist: '아티스트 A' },
+        { id: 2, title: '노래 제목 B', artist: '아티스트 B' },
+        { id: 3, title: '노래 제목 C', artist: '아티스트 C' }
+      ];
+
+      selectButton.addEventListener('click', () => {
+        const isHidden = dropdownMenu.classList.contains('hidden');
+        dropdownMenu.classList.toggle('hidden');
+        selectArrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        if (!isHidden) searchInput.value = '';
+        renderOptions(options);
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#searchableSelect')) {
+          dropdownMenu.classList.add('hidden');
+          selectArrow.style.transform = 'rotate(0deg)';
+        }
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filtered = options.filter(o => o.title.toLowerCase().includes(searchTerm) || o.artist.toLowerCase().includes(searchTerm));
+        renderOptions(filtered);
+      });
+
+      function renderOptions(filteredOptions) {
+        optionsList.innerHTML = '';
+        filteredOptions.forEach(opt => {
+          const li = document.createElement('li');
+          li.className = 'px-4 py-2 hover:bg-white/10 cursor-pointer';
+          li.innerHTML = `
+            <div class="flex items-center space-x-2.5">
+              <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="앨범 아트" class="h-10 w-10 rounded-lg object-cover">
+              <div>
+                <p class="text-sm font-medium text-white">${opt.title}</p>
+                <p class="text-xs text-gray-300">${opt.artist}</p>
+              </div>
+            </div>
+          `;
+          li.addEventListener('click', () => {
+            selectedText.textContent = opt.title;
+            dropdownMenu.classList.add('hidden');
+            selectArrow.style.transform = 'rotate(0deg)';
+            addToPlaylist(opt);
+          });
+          optionsList.appendChild(li);
+        });
       }
-      checkbox.checked = !isActive;
+
+      function addToPlaylist(opt) {
+  if (typeof playlist === 'undefined') window.playlist = [];
+  if (playlist.length >= 10) {
+    alert('최대 10곡까지 추가할 수 있습니다.');
+    return;
+  }
+  if (playlist.find(item => item.title === opt.title && item.artist === opt.artist)) {
+    alert('이미 추가된 곡입니다.');
+    return;
+  }
+  playlist.push(opt);
+
+  const li = document.createElement('li');
+  li.className = 'bg-gray-200/25 p-2 rounded-lg flex items-center space-x-2';
+  li.innerHTML = `
+    <img src="https://cdn.startupful.io/img/app_logo/no_img.png" class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
+    <div>
+      <h3 class="text-sm font-semibold">${opt.title}</h3>
+      <p class="text-xs text-gray-200">${opt.artist}</p>
+    </div>
+  `;
+  playlistBox.appendChild(li);
+}
+
+      renderOptions(options);
+    });
+  </script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tags = document.querySelectorAll(".tag");
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="hashtags"]');
+    const form = document.getElementById("tasteForm");
+
+    tags.forEach((tag, index) => {
+      const checkbox = checkboxes[index];
+      const gradient = tag.dataset.gradient.split(" ");
+      tag.addEventListener("click", () => {
+        const isActive = tag.classList.contains("bg-gradient-to-r");
+        tag.classList.remove("bg-white", "bg-opacity-30", "bg-gradient-to-r", ...gradient);
+        if (!isActive) {
+          tag.classList.add("bg-gradient-to-r", ...gradient);
+        } else {
+          tag.classList.add("bg-white", "bg-opacity-30");
+        }
+        checkbox.checked = !isActive;
+      });
+    });
+
+    form.addEventListener("submit", function (e) {
+      const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+      if (selectedCount < 3) {
+        e.preventDefault();
+        alert("최소 3개의 해시태그를 선택해주세요.");
+      }
     });
   });
+  </script>
 
-  form.addEventListener("submit", function (e) {
-    const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-    if (selectedCount < 3) {
-      e.preventDefault();
-      alert("최소 3개의 해시태그를 선택해주세요.");
-    }
-  });
-});
-</script>
-
+<footer class="fixed bottom-0 left-0 w-full bg-black bg-opacity-30 text-white px-6 py-3">
+  <div class="flex justify-between items-center">
+    <a href="/users/taste" class="text-sm">&lt 이전</a>
+    <p class="text-sm text-gray-200 text-center flex-1">PL 생성 2/3</p>
+    <a class="text-sm text-white/0">다음 &gt</a>
+  </div>
 </body>
 </html>

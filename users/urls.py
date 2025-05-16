@@ -1,9 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("signup/", views.signup_view, name="signup"),
     path("taste/", views.taste_view, name="taste"),
-    path("firstPL/", views.firstPL_view, name="firstPL"),
+    path("playlist/", views.playlist_view, name="playlist"),
 ]
