@@ -31,17 +31,12 @@
     <p class="text-lg text-gray-200 mb-4">by @{{ playlist.creator }}</p>
 
 
-    <div class="mt-6">
+    <div class="mt-3">
       <div class="flex flex-wrap gap-2 mb-5">
         {% comment %} 아래는 나중에 DB에서 불러올 반복문 자리에 들어갈 수 있도록 설계 {% endcomment %}
         {% for tag in playlist.hashtags %}
           <span class="px-3 py-1 rounded-full bg-white/10 text-sm text-white">#{{ tag }}</span>
         {% endfor %}
-
-        {% comment %} 지금은 임시로 하드코딩된 해시태그 표시 {% endcomment %}
-        <span class="px-3 py-1 rounded-full bg-white/20 text-sm text-white">#감성</span>
-        <span class="px-3 py-1 rounded-full bg-white/20 text-sm text-white">#여행</span>
-        <span class="px-3 py-1 rounded-full bg-white/20 text-sm text-white">#밤드라이브</span>
       </div>
     </div>
 

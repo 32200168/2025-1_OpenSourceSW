@@ -20,14 +20,15 @@
   <!-- 상단 콘텐츠 -->
     <div class="content space-y-6">
 
-    <!--피드 탭-->
-      <div id="feed" class="tab-content active">📸 피드 페이지</div>
-
     <!--추천 탭-->
-      <div id="recom" class="tab-content">
-        <button class="w-32 h-32 rounded-full bg-gradient-to-r from-pink-400 via-yellow-300 to-green-300 text-white text-center text-sm font-semibold hover:opacity-90 transition-opacity shadow-lg">
+      <div id="home" class="tab-content active">
+          <button class="w-32 h-32 rounded-full bg-gradient-to-r from-pink-400 via-yellow-300 to-green-300 text-white text-center text-sm font-semibold hover:opacity-90 transition-opacity shadow-lg">
           <i class="fas fa-music" style="color: white; font-size: 5em;"></i>
         </button>
+      </div>
+
+    <!--검색 탭-->
+      <div id="search" class="tab-content">
       </div>
 
     <!--플리 생성 탭-->
@@ -42,27 +43,21 @@
 
 
   <!-- 하단 탭 -->
-  <div class="fixed bottom-0 left-0 right-0 flex h-16 z-50">
-    <button onclick="showTab('feed')" class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
-      <img src="{% static 'icons/home.png' %}" alt="Home" class="tab-icon w-8 h-8">
-    </button>
-    <button onclick="showTab('recom')" class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
-      <img src="{% static 'icons/search.png' %}" alt="Search" class="tab-icon w-9 h-9">
-    </button>
-    <button onclick="showTab('add')" class="tab-btn w-1/4 flex justify-center items-center">
-      <img src="{% static 'icons/add.png' %}" alt="Add" class="tab-icon w-9 h-9">
-    </button>
-    <button onclick="showTab('profile')" class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
-      <img src="{% static 'icons/profile.png' %}" alt="Profile" class="tab-icon w-8 h-8">
-    </button>
-  </div>
+    <div class="fixed bottom-0 left-0 right-0 flex h-16 z-50">
+      <button onclick="showTab('home')" class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
+        <img src="{% static 'icons/home.png' %}" alt="Home" class="tab-icon w-8 h-8">
+      </button>
+      <button onclick="showTab('search')" class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
+        <img src="{% static 'icons/search.png' %}" alt="Search" class="tab-icon w-9 h-9">
+      </button>
+      <button onclick="showTab('add')" class="tab-btn w-1/4 flex justify-center items-center">
+        <img src="{% static 'icons/add.png' %}" alt="Add" class="tab-icon w-9 h-9">
+      </button>
+      <button onclick="showTab('profile')" class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
+        <img src="{% static 'icons/profile.png' %}" alt="Profile" class="tab-icon w-8 h-8">
+      </button>
+    </div>
 
-  <script>
-  function showPLTab(tabId) {
-    document.querySelectorAll('.pl-tab').forEach(el => el.classList.add('hidden'));
-    document.getElementById(tabId).classList.remove('hidden');
-  }
-  </script>
 
 
   <script>
@@ -190,6 +185,7 @@
   </script>
 
 
+  <!-- 탭 버튼 -->
   <script>
     function showTab(tabId) {
       // 콘텐츠 전환
