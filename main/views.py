@@ -99,3 +99,32 @@ def playlist_view(request):
         "playlists": [],
         "query": ""
     })
+
+
+
+def recommendation_view(request):
+    dummy_playlist = {
+        'title': '감성적인 밤에 듣는 플레이리스트',
+        'creator': 'test_user',
+        'hashtags': ['잔잔한', '감성', '밤'],
+        'songs': [
+            {'title': '밤편지', 'artist': '아이유', 'album_art_url': ''},
+            {'title': '너를 그린다', 'artist': '정키', 'album_art_url': ''},
+            {'title': '이 밤', 'artist': '양다일', 'album_art_url': ''},
+        ]
+    }
+    return render(request, 'main/recommendation.html', {'playlist': dummy_playlist})
+
+
+def hashtag_view(request):
+    hashtag_list = ['여행', '공부', '운동']
+    playlist_data = [
+        {'title': '여행할 때 듣는 음악', 'hashtags': ['여행']},
+        {'title': '공부 집중 음악', 'hashtags': ['공부']},
+        {'title': '헬스장 플레이리스트', 'hashtags': ['운동']},
+        {'title': '카페에서 듣는 음악', 'hashtags': ['공부', '여행']}
+    ]
+    return render(request, 'main/main.html', {
+        'hashtag_list': hashtag_list,
+        'playlist_data': playlist_data
+    })

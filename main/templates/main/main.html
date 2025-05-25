@@ -21,14 +21,39 @@
     <div class="content space-y-6">
 
     <!--추천 탭-->
-      <div id="home" class="tab-content active">
-          <button class="w-32 h-32 rounded-full bg-gradient-to-r from-pink-400 via-yellow-300 to-green-300 text-white text-center text-sm font-semibold hover:opacity-90 transition-opacity shadow-lg">
-          <i class="fas fa-music" style="color: white; font-size: 5em;"></i>
-        </button>
+      <div id="home" class="tab-content">
+        {% include "main/includes/rec.html" %}
       </div>
 
     <!--검색 탭-->
       <div id="search" class="tab-content">
+        <div class="mt-10 text-white">
+          <h2 class="text-xl font-bold text-center mb-4">🔍 해시태그로 플레이리스트 검색</h2>
+
+          {% include "main/includes/search_hashtag.html" %}
+
+          <div id="playlistResults" class="mt-6"></div>
+        </div>
+
+        <script>
+          const playlistData = [
+            { title: '밤 드라이브 음악', hashtags: ['드라이브', '시티팝'] },
+            { title: '감성 잔잔 플레이리스트', hashtags: ['감성적인', '잔잔한'] },
+            { title: '수능금지곡 모음', hashtags: ['수능금지곡'] },
+            { title: '카페 분위기 음악', hashtags: ['카페분위기'] }
+          ];
+
+          document.querySelectorAll('.tag').forEach(tagEl => {
+            tagEl.addEventListener('click', () => {
+              const clickedTag = tagEl.textContent.trim().replace('#', '');
+              const filtered = playlistData.filter(p => p.hashtags.includes(clickedTag));
+              const resultDiv = document.getElementById('playlistResults');
+              resultDiv.innerHTML = filtered.length
+                ? '<ul>' + filtered.map(p => `<li class="my-2">🎵 ${p.title}</li>`).join('') + '</ul>'
+                : '<p class="mt-4 text-center">해당 해시태그가 포함된 플레이리스트가 없습니다.</p>';
+            });
+          });
+        </script>
       </div>
 
     <!--플리 생성 탭-->
@@ -201,11 +226,12 @@
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
 
-      // 모든 아이콘 흑백으로 초기화
+      // 아이콘 초기화
       document.querySelectorAll('.tab-icon').forEach(img => img.classList.remove('invert'));
 
-      // 클릭한 버튼의 아이콘만 invert 추가
-      event.currentTarget.querySelector('.tab-icon').classList.add('invert');
+      if (event?.currentTarget) {
+        event.currentTarget.querySelector('.tab-icon')?.classList.add('invert');
+      }
     }
   </script>
 
@@ -282,6 +308,21 @@
     // 선택한 탭만 보이기
     document.getElementById(tabId).classList.remove('hidden');
   }
+</script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const defaultTabId = urlParams.get('tab') || 'profile';  // 기본값: profile
+    showTab(defaultTabId);
+
+    // 기본 탭 버튼에도 invert 효과 적용
+    const targetBtn = [...document.querySelectorAll('.tab-btn')].find(btn =>
+      btn.getAttribute('onclick')?.includes(defaultTabId)
+    );
+    targetBtn?.querySelector('.tab-icon')?.classList.add('invert');
+  });
 </script>
 
 </body>

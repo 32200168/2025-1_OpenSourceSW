@@ -1,10 +1,11 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>플레이리스트 상세</title>
-  
+  <title>플레이리스트 추천 결과</title>
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
@@ -13,10 +14,9 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     crossorigin="anonymous"
   />
-
 </head>
 <body class="min-h-screen w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4" style="font-family: 'Noto Sans KR', sans-serif;">
-  
+
   <div class="w-full max-w-3xl mx-auto p-5 bg-white/15 rounded-lg shadow text-white">
 
     <div class="flex justify-between items-center">
@@ -30,45 +30,43 @@
     </div>
     <p class="text-lg text-gray-200 mb-4">by @{{ playlist.creator }}</p>
 
-
     <div class="mt-3">
       <div class="flex flex-wrap gap-2 mb-5">
-        {% comment %} 아래는 나중에 DB에서 불러올 반복문 자리에 들어갈 수 있도록 설계 {% endcomment %}
         {% for tag in playlist.hashtags %}
           <span class="px-3 py-1 rounded-full bg-white/10 text-sm text-white">#{{ tag }}</span>
         {% endfor %}
       </div>
     </div>
 
-  <ul class="space-y-2">
-    {% for song in playlist.songs %}
-      <li class="bg-gray-100/10 p-2 rounded-lg flex items-center space-x-2">
-        <img src="{{ song.album_art_url|default:'https://cdn.startupful.io/img/app_logo/no_img.png' }}" class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
-        <div>
-          <h3 class="text-sm font-semibold">{{ song.title }}</h3>
-          <p class="text-xs text-gray-200">{{ song.artist }}</p>
-        </div>
-      </li>
-    {% endfor %}
-  </ul>
+    <ul class="space-y-2">
+      {% for song in playlist.songs %}
+        <li class="bg-gray-100/10 p-2 rounded-lg flex items-center space-x-2">
+          <img src="{{ song.album_art_url|default:'https://cdn.startupful.io/img/app_logo/no_img.png' }}" class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
+          <div>
+            <h3 class="text-sm font-semibold">{{ song.title }}</h3>
+            <p class="text-xs text-gray-200">{{ song.artist }}</p>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
 
+    <script>
+      let liked = false;
+      let count = 0;
 
-  <script>
-  let liked = false;
-  let count = 0;
+      function toggleLike() {
+        liked = !liked;
+        count += liked ? 1 : -1;
 
-  function toggleLike() {
-    liked = !liked;
-    count += liked ? 1 : -1;
+        const heartIcon = document.getElementById('heartIcon');
+        const likeCount = document.getElementById('likeCount');
 
-    const heartIcon = document.getElementById('heartIcon');
-    const likeCount = document.getElementById('likeCount');
+        heartIcon.classList.toggle('text-white', !liked);
+        heartIcon.classList.toggle('text-red-500', liked);
+        likeCount.textContent = count;
+      }
+    </script>
 
-    heartIcon.classList.toggle('text-white', !liked);
-    heartIcon.classList.toggle('text-red-500', liked);
-    likeCount.textContent = count;
-  }
-</script>
-
+  </div>
 </body>
 </html>
