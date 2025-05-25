@@ -42,7 +42,7 @@
         </div>
 
     <!-- 해시태그 -->
-    <form id="tasteForm" method="POST" action="/users/playlist/">
+   <form method="post" action="/users/taste/">
           {% csrf_token %}
         <div class="flex flex-wrap gap-2 justify-center">
             <input type="checkbox" name="hashtags" value="K-POP" hidden>

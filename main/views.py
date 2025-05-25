@@ -5,17 +5,19 @@ from django.http import HttpResponseNotFound
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.contrib import messages
 import json
+
 
 
 @login_required
 def main_view(request):
     return render(request, 'main/main.html', {
-        'tab': request.GET.get('tab', 'feed')  # 기본값은 feed 탭
+        'tab': request.GET.get('tab', 'home'),
+        'playlists': [],
+        'query': '', 
     })
 
-def profile_edit(request):
-    return render(request, 'main/profile_edit.html')
 
 def playlist_detail(request, playlist_id):
     playlist = mock_playlists.get(playlist_id)
@@ -64,29 +66,36 @@ mock_playlists = {
 }
 
 
-def profile_view(request, username):
-    user_profile = get_object_or_404(User, username=username)
-    is_own_profile = (user_profile == request.user)
+def playlist_view(request):
+    if request.method == "POST":
+        songs_json = request.POST.get("songs", "[]")
+        hashtags = request.POST.getlist("hashtags")
 
-    playlists = []
-    for pid, data in mock_playlists.items():
-        playlists.append({
-            'id': pid,
-            'title': data['title'],
-            'hashtags': data['hashtags'],
-        })
+        try:
+            songs = json.loads(songs_json)
+        except json.JSONDecodeError:
+            songs = []
 
-    return render(request, 'main/profile.html', {
-        'profile_user': user_profile,
-        'playlists': playlists,
-        'is_own_profile': is_own_profile,
-    })
+        if len(songs) < 3 or len(hashtags) < 3:
+            error_msg = ""
+            if len(songs) < 3:
+                error_msg += "노래는 최소 3곡 이상 선택해야 합니다. "
+            if len(hashtags) < 3:
+                error_msg += "해시태그는 최소 3개 이상 선택해야 합니다."
 
+            return render(request, "main/main.html", {
+                "tab": "add",
+                "error": error_msg,
+                "playlists": [],
+                "query": ""
+            })
 
-@login_required
-def main_view(request):
-    return render(request, 'main/main.html', {
-        'tab': request.GET.get('tab', 'home'),  # 기본 홈 탭
-        'playlists': [],  # 검색 관련 임시 데이터 제거
-        'query': '',  # 검색어 제거
+        messages.success(request, "플레이리스트가 저장되었습니다.")
+
+        return redirect("/?tab=add")
+
+    return render(request, "main/main.html", {
+        "tab": "add",
+        "playlists": [],
+        "query": ""
     })

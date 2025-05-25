@@ -21,6 +21,9 @@
         </style>
 </div>
 
+<form id="tasteForm" method="POST" action="{% url 'playlist' %}">
+  {% csrf_token %}
+
 <div class="max-w-3xl text-white mx-auto bg-white/10 backdrop-blur-l rounded-xl p-6 shadow-2xl border border-white">
   <!-- Editable Playlist Title -->
   <div class="flex items-center justify-between mb-4">
@@ -50,11 +53,11 @@
   <!-- Playlist -->
     <ul id="playlistBox" class="space-y-1 border border-white rounded-lg p-2"></ul>
   </div>
-</form>
+
 
   <!-- 해시태그 -->
-  <div class="text-lg text-white text-center mt-10"><h2>이 플레이리스트를 표현한다면?</h2></div>  
-    <form class="mt-5">
+  <div class="text-lg text-white text-center mt-10 mb-10"><h2>이 플레이리스트를 표현한다면?</h2></div>  
+    
         <div class="flex flex-wrap gap-2 justify-center">
             <input type="checkbox" name="hashtags" value="K-POP" hidden>
             <span class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30"
@@ -217,6 +220,12 @@
                 #시티팝
             </span>
         </div>
-    <div class="text-center mt-3 mb-20"><button type="submit" class="mt-10 font-semibold text-white text-xl">저장하기</button></div>
-    </form>
+        {% if error %}
+            <p class="text-red-500 text-center my-2 text-sm">{{ error }}</p>
+        {% endif %}
+       
+    <div class="text-center mt-3 mb-20">
+        <button type="submit" class="mt-10 font-semibold text-white text-xl">저장하기</button>
+    </div>
   </div>
+</form>

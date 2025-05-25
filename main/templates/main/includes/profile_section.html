@@ -34,13 +34,6 @@
             </div>
           </div>
 
-          <!-- 수정 버튼 -->
-          <div class="mt-5 mb-2 text-left">
-            <a href="{% url 'profile_edit' %}" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-black dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600">
-              Edit Profile
-            </a>
-          </div>  
-
 
           <!-- 내 플레이리스트 / 좋아요한 플레이리스트 탭 -->
           <div class="mt-6">
@@ -77,13 +70,11 @@
                   ❤️ Liked Playlist A
                 </a>
               </li>
-
               <li class="bg-white/20 p-3 rounded text-white hover:bg-white/30">
                 <a href="{% url 'playlist_detail' playlist_id=4 %}" class="block w-full h-full">
                   ❤️ Liked Playlist B
                 </a>
               </li>
-
             </ul>
           </div>
 

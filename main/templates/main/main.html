@@ -59,7 +59,8 @@
     </div>
 
 
-
+  
+  <!--플리 생성 탭 - 노래 추가 -->
   <script>
   document.addEventListener('DOMContentLoaded', function () {
     const selectButton = document.getElementById('selectButton');
@@ -69,6 +70,13 @@
     const selectedText = document.getElementById('selectedText');
     const selectArrow = document.getElementById('selectArrow');
     const playlistBox = document.getElementById('playlistBox');
+    const form = document.getElementById("tasteForm");
+    const playlistInput = document.getElementById("playlistData");
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="hashtags"]');
+    const tags = document.querySelectorAll(".tag");
+
+    // 곡 목록 전역 변수
+    window.playlist = [];
 
     const options = [
       { id: 1, title: '노래 제목 A', artist: '아티스트 A' },
@@ -76,6 +84,7 @@
       { id: 3, title: '노래 제목 C', artist: '아티스트 C' }
     ];
 
+    // 드롭다운 관련
     selectButton.addEventListener('click', () => {
       const isHidden = dropdownMenu.classList.contains('hidden');
       dropdownMenu.classList.toggle('hidden');
@@ -125,7 +134,7 @@
     }
 
     function addToPlaylist(opt) {
-      if (typeof playlist === 'undefined') window.playlist = [];
+      const playlist = window.playlist;
       if (playlist.length >= 10) {
         alert('최대 10곡까지 추가할 수 있습니다.');
         return;
@@ -134,6 +143,7 @@
         alert('이미 추가된 곡입니다.');
         return;
       }
+
       playlist.push(opt);
 
       const li = document.createElement('li');
@@ -144,21 +154,11 @@
           <h3 class="text-sm font-semibold">${opt.title}</h3>
           <p class="text-xs text-gray-200">${opt.artist}</p>
         </div>
-       `;
-        playlistBox.appendChild(li);
-      }
+      `;
+      playlistBox.appendChild(li);
+    }
 
-      renderOptions(options);
-    });
-  </script>
-
-
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const tags = document.querySelectorAll(".tag");
-    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="hashtags"]');
-    const form = document.getElementById("tasteForm");
-
+    // 해시태그 토글
     tags.forEach((tag, index) => {
       const checkbox = checkboxes[index];
       const gradient = tag.dataset.gradient.split(" ");
@@ -174,12 +174,21 @@
       });
     });
 
+    // 유효성 검사 + 곡 데이터 전송
     form.addEventListener("submit", function (e) {
-      const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-      if (selectedCount < 3) {
+      const selectedHashtags = Array.from(checkboxes).filter(cb => cb.checked).length;
+      const songCount = window.playlist.length;
+
+      if (songCount < 3 || selectedHashtags < 3) {
         e.preventDefault();
-        alert("최소 3개의 해시태그를 선택해주세요.");
+        let message = "";
+        if (songCount < 3) message += "노래는 3곡 이상 선택해주세요.\n";
+        if (selectedHashtags < 3) message += "해시태그는 3개 이상 선택해주세요.";
+        alert(message);
+        return;
       }
+
+      playlistInput.value = JSON.stringify(window.playlist);
     });
   });
   </script>
@@ -200,8 +209,6 @@
     }
   </script>
 
-
-
   <script>
     function openModal(id) {
       document.getElementById(id).classList.remove('hidden');
@@ -213,12 +220,10 @@
     }
   </script>
 
-
   <style>
     .tab-content { display: none; }
     .tab-content.active { display: block; }
   </style>
-
 
   <!-- 팔로워 모달 -->
   <div id="followersModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
@@ -262,6 +267,20 @@
       </div>
     `;
     document.body.appendChild(modal);
+  }
+</script>
+
+
+<!-- myPL / likedPL-->
+<script>
+  function showPLTab(tabId) {
+    // 모든 탭 숨기기
+    document.querySelectorAll('.pl-tab').forEach(tab => {
+      tab.classList.add('hidden');
+    });
+
+    // 선택한 탭만 보이기
+    document.getElementById(tabId).classList.remove('hidden');
   }
 </script>
 
