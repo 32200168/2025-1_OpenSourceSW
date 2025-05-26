@@ -17,9 +17,13 @@ def login_view(request):
             login(request, user)
             return redirect("main")
         else:
-            messages.error(request, "Invalid username or password")
+            # 로그인 실패 시 오류 메시지 전달
+            return render(request, "users/login.html", {
+                'error': "등록된 사용자가 없거나 비밀번호가 틀렸습니다."
+            })
 
     return render(request, "users/login.html")
+
 
 def signup_view(request):
     if request.method == 'POST':
@@ -27,20 +31,33 @@ def signup_view(request):
         password = request.POST['password']
 
         if User.objects.filter(username=username).exists():
-            return render(request, 'signup.html', {'error': '이미 존재하는 사용자명입니다.'})
+            return render(request, 'users/signup.html', {'error': '이미 존재하는 사용자명입니다.'})
 
         User.objects.create_user(username=username, password=password)
-        return redirect('/users/taste/')  # 회원가입 후 취향선택 페이지로 이동
+        return redirect('/users/taste/')
 
     return render(request, 'users/signup.html')
+
 
 
 def taste_view(request):
     if request.method == "POST":
         tags = request.POST.getlist("hashtags")
         print("선택된 태그:", tags)  # 로그 확인용
-        return redirect("/users/firstPL/")
+        return redirect("/users/playlist/")
     return render(request, "users/taste.html")
 
+<<<<<<< HEAD
 def playlist_view(request):
     return render(request, "users/playlist.html") # 다음으로 어디로???
+=======
+
+def playlist_view(request):
+    if request.method == "POST":
+        # 여기에 저장 처리 로직 추가
+        # 예: 폼에서 데이터 읽고 DB에 저장
+
+        return redirect("main")  # 저장 후 main 페이지로 이동
+
+    return render(request, "users/playlist.html")
+>>>>>>> main

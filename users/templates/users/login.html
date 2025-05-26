@@ -37,6 +37,10 @@
         placeholder="Enter your username">
       </div>
 
+      {% if error %}
+        <p class="text-red-500 text-sm mb-4">{{ error }}</p>
+      {% endif %}
+
       <div>
         <label class="block text-gray-200 text-sm font-medium mb-2">Password</label>
         <input name="password" type="password" class="w-full px-4 py-3 bg-white/20 border border-gray-200/20 rounded-lg focus:ring-2 focus:ring-white/50 focus:outline-none text-white placeholder-gray-300" placeholder="Enter your password">

@@ -35,6 +35,9 @@
           oninvalid="this.setCustomValidity('영문 알파벳만 입력 가능합니다 (최대 20자)')"
           required>
       </div>
+      {% if error %}
+        <p class="text-red-500 text-sm mb-4">{{ error }}</p>
+      {% endif %}
 
       <div>
         <label class="block text-gray-200 text-sm font-medium mb-2">Password</label>

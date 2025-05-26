@@ -1,30 +1,60 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <title>Plistory</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    crossorigin="anonymous"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    crossorigin="anonymous" />
 </head>
-<body class="min-h-screen w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4" style="font-family: 'Noto Sans KR', sans-serif;">
+
+<body class="min-h-screen w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4"
+  style="font-family: 'Noto Sans KR', sans-serif;">
 
   <div>
 
-  <!-- 상단 콘텐츠 -->
+    <!-- 상단 콘텐츠 -->
     <div class="content space-y-6">
 
-      <!--피드 탭-->
-      <div id="feed" class="tab-content active">📸 피드 페이지</div>
-
       <!--추천 탭-->
-      <div id="recom" class="tab-content">🔲 플레이리스트 추천 페이지</div>
+      <div id="home" class="tab-content">
+        {% include "main/includes/rec.html" %}
+      </div>
+
+      <!--검색 탭-->
+      <div id="search" class="tab-content">
+        <div class="mt-10 text-white">
+          <h2 class="text-xl font-bold text-center mb-4">🔍 해시태그로 플레이리스트 검색</h2>
+
+          {% include "main/includes/search_hashtag.html" %}
+
+          <div id="playlistResults" class="mt-6"></div>
+        </div>
+
+        <script>
+          const playlistData = [
+            { title: '밤 드라이브 음악', hashtags: ['드라이브', '시티팝'] },
+            { title: '감성 잔잔 플레이리스트', hashtags: ['감성적인', '잔잔한'] },
+            { title: '수능금지곡 모음', hashtags: ['수능금지곡'] },
+            { title: '카페 분위기 음악', hashtags: ['카페분위기'] }
+          ];
+
+          document.querySelectorAll('.tag').forEach(tagEl => {
+            tagEl.addEventListener('click', () => {
+              const clickedTag = tagEl.textContent.trim().replace('#', '');
+              const filtered = playlistData.filter(p => p.hashtags.includes(clickedTag));
+              const resultDiv = document.getElementById('playlistResults');
+              resultDiv.innerHTML = filtered.length
+                ? '<ul>' + filtered.map(p => `<li class="my-2">🎵 ${p.title}</li>`).join('') + '</ul>'
+                : '<p class="mt-4 text-center">해당 해시태그가 포함된 플레이리스트가 없습니다.</p>';
+            });
+          });
+        </script>
+      </div>
 
       <!--플리 생성 탭-->
       <div id="add" class="tab-content">
@@ -33,110 +63,86 @@
 
       <!--프로필 탭-->
       <div id="profile" class="tab-content">
-        <div class="w-full max-w-3xl p-5 bg-white/20 dark:bg-gray-800 rounded-lg shadow">
-          <div class="flex items-start gap-6">
-            <!-- 프로필 이미지 -->
-            <img src="{% static 'profile_pic/default.jpg' %}" alt="profile"
-                class="w-24 h-24 rounded-lg object-cover">
-
-            <!-- 오른쪽 정보 -->
-            <div class="flex-1 text-left">
-              <!-- 사용자 이름 -->
-              <h2 class="text-3xl font-semibold text-white">@{{ request.user.username }}</h2>
-
-              <!-- 팔로잉/팔로워 -->
-              <div class="flex gap-6 mt-1">
-                <div>
-                  <p class="text-lg font-bold text-white">3</p>
-                  <p class="text-gray-200 dark:text-gray-400 text-sm">Playlists</p>
-                </div>
-                <div>
-                  <p class="text-lg font-bold text-white">12</p>
-                  <p class="text-gray-200 dark:text-gray-400 text-sm">Followers</p>
-                </div>
-                <div>
-                  <p class="text-lg font-bold text-white">8</p>
-                  <p class="text-gray-200 dark:text-gray-400 text-sm">Following</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 수정 버튼 -->
-          <div class="mt-5 mb-2 text-left">
-            <a href="{% url 'profile_edit' %}" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-black dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600">
-              Edit Profile
-            </a>
-          </div>
-        </div>
+        {% include "main/includes/profile_section.html" with profile_user=request.user is_own_profile=True %}
       </div>
-    </div>
-  </div>
+
+
+      <!-- 하단 탭 -->
+      <div class="fixed bottom-0 left-0 right-0 flex h-16 z-50">
+        <button onclick="showTab('home')"
+          class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
+          <img src="{% static 'icons/home.png' %}" alt="Home" class="tab-icon w-8 h-8">
+        </button>
+        <button onclick="showTab('search')"
+          class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
+          <img src="{% static 'icons/search.png' %}" alt="Search" class="tab-icon w-9 h-9">
+        </button>
+        <button onclick="showTab('add')" class="tab-btn w-1/4 flex justify-center items-center">
+          <img src="{% static 'icons/add.png' %}" alt="Add" class="tab-icon w-9 h-9">
+        </button>
+        <button onclick="showTab('profile')"
+          class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
+          <img src="{% static 'icons/profile.png' %}" alt="Profile" class="tab-icon w-8 h-8">
+        </button>
+      </div>
 
 
 
-  <!-- 하단 탭 -->
-  <div class="fixed bottom-0 left-0 right-0 flex h-16 z-50">
-    <button onclick="showTab('feed')" class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
-      <img src="{% static 'icons/home.png' %}" alt="Home" class="tab-icon w-8 h-8">
-    </button>
-    <button onclick="showTab('recom')" class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
-      <img src="{% static 'icons/search.png' %}" alt="Search" class="tab-icon w-9 h-9">
-    </button>
-    <button onclick="showTab('add')" class="tab-btn w-1/4 flex justify-center items-center">
-      <img src="{% static 'icons/add.png' %}" alt="Add" class="tab-icon w-9 h-9">
-    </button>
-    <button onclick="showTab('profile')" class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
-      <img src="{% static 'icons/profile.png' %}" alt="Profile" class="tab-icon w-8 h-8">
-    </button>
-  </div>
+      <!--플리 생성 탭 - 노래 추가 -->
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const selectButton = document.getElementById('selectButton');
+          const dropdownMenu = document.getElementById('dropdownMenu');
+          const searchInput = document.getElementById('searchInput');
+          const optionsList = document.getElementById('optionsList');
+          const selectedText = document.getElementById('selectedText');
+          const selectArrow = document.getElementById('selectArrow');
+          const playlistBox = document.getElementById('playlistBox');
+          const form = document.getElementById("tasteForm");
+          const playlistInput = document.getElementById("playlistData");
+          const checkboxes = document.querySelectorAll('input[type="checkbox"][name="hashtags"]');
+          const tags = document.querySelectorAll(".tag");
 
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const selectButton = document.getElementById('selectButton');
-    const dropdownMenu = document.getElementById('dropdownMenu');
-    const searchInput = document.getElementById('searchInput');
-    const optionsList = document.getElementById('optionsList');
-    const selectedText = document.getElementById('selectedText');
-    const selectArrow = document.getElementById('selectArrow');
-    const playlistBox = document.getElementById('playlistBox');
+          // 곡 목록 전역 변수
+          window.playlist = [];
 
-    const options = [
-      { id: 1, title: '노래 제목 A', artist: '아티스트 A' },
-      { id: 2, title: '노래 제목 B', artist: '아티스트 B' },
-      { id: 3, title: '노래 제목 C', artist: '아티스트 C' }
-    ];
+          const options = [
+            { id: 1, title: '노래 제목 A', artist: '아티스트 A' },
+            { id: 2, title: '노래 제목 B', artist: '아티스트 B' },
+            { id: 3, title: '노래 제목 C', artist: '아티스트 C' }
+          ];
 
-    selectButton.addEventListener('click', () => {
-      const isHidden = dropdownMenu.classList.contains('hidden');
-      dropdownMenu.classList.toggle('hidden');
-      selectArrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
-      if (!isHidden) searchInput.value = '';
-      renderOptions(options);
-    });
+          // 드롭다운 관련
+          selectButton.addEventListener('click', () => {
+            const isHidden = dropdownMenu.classList.contains('hidden');
+            dropdownMenu.classList.toggle('hidden');
+            selectArrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+            if (!isHidden) searchInput.value = '';
+            renderOptions(options);
+          });
 
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#searchableSelect')) {
-        dropdownMenu.classList.add('hidden');
-        selectArrow.style.transform = 'rotate(0deg)';
-      }
-    });
+          document.addEventListener('click', (e) => {
+            if (!e.target.closest('#searchableSelect')) {
+              dropdownMenu.classList.add('hidden');
+              selectArrow.style.transform = 'rotate(0deg)';
+            }
+          });
 
-    searchInput.addEventListener('input', (e) => {
-      const searchTerm = e.target.value.toLowerCase();
-      const filtered = options.filter(o =>
-        o.title.toLowerCase().includes(searchTerm) ||
-        o.artist.toLowerCase().includes(searchTerm)
-      );
-      renderOptions(filtered);
-    });
+          searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = options.filter(o =>
+              o.title.toLowerCase().includes(searchTerm) ||
+              o.artist.toLowerCase().includes(searchTerm)
+            );
+            renderOptions(filtered);
+          });
 
-    function renderOptions(filteredOptions) {
-      optionsList.innerHTML = '';
-      filteredOptions.forEach(opt => {
-        const li = document.createElement('li');
-        li.className = 'px-4 py-2 hover:bg-white/10 cursor-pointer';
-        li.innerHTML = `
+          function renderOptions(filteredOptions) {
+            optionsList.innerHTML = '';
+            filteredOptions.forEach(opt => {
+              const li = document.createElement('li');
+              li.className = 'px-4 py-2 hover:bg-white/10 cursor-pointer';
+              li.innerHTML = `
           <div class="flex items-center space-x-2.5">
             <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="앨범 아트" class="h-10 w-10 rounded-lg object-cover">
             <div>
@@ -145,95 +151,190 @@
             </div>
           </div>
         `;
-        li.addEventListener('click', () => {
-          selectedText.textContent = opt.title;
-          dropdownMenu.classList.add('hidden');
-          selectArrow.style.transform = 'rotate(0deg)';
-          addToPlaylist(opt);
-        });
-        optionsList.appendChild(li);
-      });
-    }
+              li.addEventListener('click', () => {
+                selectedText.textContent = opt.title;
+                dropdownMenu.classList.add('hidden');
+                selectArrow.style.transform = 'rotate(0deg)';
+                addToPlaylist(opt);
+              });
+              optionsList.appendChild(li);
+            });
+          }
 
-    function addToPlaylist(opt) {
-      if (typeof playlist === 'undefined') window.playlist = [];
-      if (playlist.length >= 10) {
-        alert('최대 10곡까지 추가할 수 있습니다.');
-        return;
-      }
-      if (playlist.find(item => item.title === opt.title && item.artist === opt.artist)) {
-        alert('이미 추가된 곡입니다.');
-        return;
-      }
-      playlist.push(opt);
+          function addToPlaylist(opt) {
+            const playlist = window.playlist;
+            if (playlist.length >= 10) {
+              alert('최대 10곡까지 추가할 수 있습니다.');
+              return;
+            }
+            if (playlist.find(item => item.title === opt.title && item.artist === opt.artist)) {
+              alert('이미 추가된 곡입니다.');
+              return;
+            }
 
-      const li = document.createElement('li');
-      li.className = 'bg-gray-200/25 p-2 rounded-lg flex items-center space-x-2';
-      li.innerHTML = `
+            playlist.push(opt);
+
+            const li = document.createElement('li');
+            li.className = 'bg-gray-200/25 p-2 rounded-lg flex items-center space-x-2';
+            li.innerHTML = `
         <img src="https://cdn.startupful.io/img/app_logo/no_img.png" class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
         <div>
           <h3 class="text-sm font-semibold">${opt.title}</h3>
           <p class="text-xs text-gray-200">${opt.artist}</p>
         </div>
-       `;
-        playlistBox.appendChild(li);
-      }
+      `;
+            playlistBox.appendChild(li);
+          }
 
-      renderOptions(options);
-    });
-  </script>
+          // 해시태그 토글
+          tags.forEach((tag, index) => {
+            const checkbox = checkboxes[index];
+            const gradient = tag.dataset.gradient.split(" ");
+            tag.addEventListener("click", () => {
+              const isActive = tag.classList.contains("bg-gradient-to-r");
+              tag.classList.remove("bg-white", "bg-opacity-30", "bg-gradient-to-r", ...gradient);
+              if (!isActive) {
+                tag.classList.add("bg-gradient-to-r", ...gradient);
+              } else {
+                tag.classList.add("bg-white", "bg-opacity-30");
+              }
+              checkbox.checked = !isActive;
+            });
+          });
 
-  <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const tags = document.querySelectorAll(".tag");
-  const checkboxes = document.querySelectorAll('input[type="checkbox"][name="hashtags"]');
-  const form = document.getElementById("tasteForm");
+          // 유효성 검사 + 곡 데이터 전송
+          form.addEventListener("submit", function (e) {
+            const selectedHashtags = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const songCount = window.playlist.length;
 
-  tags.forEach((tag, index) => {
-    const checkbox = checkboxes[index];
-    const gradient = tag.dataset.gradient.split(" ");
-    tag.addEventListener("click", () => {
-      const isActive = tag.classList.contains("bg-gradient-to-r");
-      tag.classList.remove("bg-white", "bg-opacity-30", "bg-gradient-to-r", ...gradient);
-      if (!isActive) {
-        tag.classList.add("bg-gradient-to-r", ...gradient);
-      } else {
-        tag.classList.add("bg-white", "bg-opacity-30");
-      }
-      checkbox.checked = !isActive;
-    });
-  });
+            if (songCount < 3 || selectedHashtags < 3) {
+              e.preventDefault();
+              let message = "";
+              if (songCount < 3) message += "노래는 3곡 이상 선택해주세요.\n";
+              if (selectedHashtags < 3) message += "해시태그는 3개 이상 선택해주세요.";
+              alert(message);
+              return;
+            }
 
-  form.addEventListener("submit", function (e) {
-    const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-    if (selectedCount < 3) {
-      e.preventDefault();
-      alert("최소 3개의 해시태그를 선택해주세요.");
-    }
-  });
-});
-</script>
-
-
-  <script>
-    function showTab(tabId) {
-      // 콘텐츠 전환
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-
-      // 모든 아이콘 흑백으로 초기화
-      document.querySelectorAll('.tab-icon').forEach(img => img.classList.remove('invert'));
-
-      // 클릭한 버튼의 아이콘만 invert 추가
-      event.currentTarget.querySelector('.tab-icon').classList.add('invert');
-    }
-  </script>
+            playlistInput.value = JSON.stringify(window.playlist);
+          });
+        });
+      </script>
 
 
-  <style>
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-  </style>
+      <!-- 탭 버튼 -->
+      <script>
+        function showTab(tabId) {
+          // 콘텐츠 전환
+          document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+          document.getElementById(tabId).classList.add('active');
+
+          // 아이콘 초기화
+          document.querySelectorAll('.tab-icon').forEach(img => img.classList.remove('invert'));
+
+          if (event?.currentTarget) {
+            event.currentTarget.querySelector('.tab-icon')?.classList.add('invert');
+          }
+        }
+      </script>
+
+      <script>
+        function openModal(id) {
+          document.getElementById(id).classList.remove('hidden');
+          document.getElementById(id).classList.add('flex');
+        }
+        function closeModal(id) {
+          document.getElementById(id).classList.add('hidden');
+          document.getElementById(id).classList.remove('flex');
+        }
+      </script>
+
+      <style>
+        .tab-content {
+          display: none;
+        }
+
+        .tab-content.active {
+          display: block;
+        }
+      </style>
+
+      <!-- 팔로워 모달 -->
+      <div id="followersModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+        <div class="bg-white w-80 max-h-96 overflow-y-auto rounded-lg p-4">
+          <h2 class="text-xl font-semibold mb-3">팔로워</h2>
+          <ul>
+            <li class="py-2 border-b">@follower1</li>
+            <li class="py-2 border-b">@follower2</li>
+            <li class="py-2 border-b">@follower3</li>
+          </ul>
+          <button onclick="closeModal('followersModal')"
+            class="mt-4 w-full bg-gray-200 hover:bg-gray-300 rounded py-1">닫기</button>
+        </div>
+      </div>
+
+      <!-- 팔로잉 모달 -->
+      <div id="followingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+        <div class="bg-white w-80 max-h-96 overflow-y-auto rounded-lg p-4">
+          <h2 class="text-xl font-semibold mb-3">팔로잉</h2>
+          <ul>
+            <li class="py-2 border-b">@followee1</li> <!-- 나중에 수정 -->
+            <li class="py-2 border-b">@followee2</li>
+            <li class="py-2 border-b">@followee3</li>
+          </ul>
+          <button onclick="closeModal('followingModal')"
+            class="mt-4 w-full bg-gray-200 hover:bg-gray-300 rounded py-1">닫기</button>
+        </div>
+      </div>
+
+      <!--플레이리스트 정보 표시-->
+      <script>
+        function openPLModal(playlistId) {
+          const pl = mockPlaylists[playlistId];
+          if (!pl) return;
+
+          const modal = document.createElement('div');
+          modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
+          modal.innerHTML = `
+      <div class="bg-white w-96 max-h-[80vh] overflow-y-auto rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">${pl.title}</h2>
+        <ul class="mb-4">${pl.songs.map(song => `<li class="py-1 border-b">${song}</li>`).join('')}</ul>
+        <button onclick="document.body.removeChild(this.parentElement.parentElement)" class="w-full mt-4 bg-gray-200 hover:bg-gray-300 rounded py-2">닫기</button>
+      </div>
+    `;
+          document.body.appendChild(modal);
+        }
+      </script>
+
+
+      <!-- myPL / likedPL-->
+      <script>
+        function showPLTab(tabId) {
+          // 모든 탭 숨기기
+          document.querySelectorAll('.pl-tab').forEach(tab => {
+            tab.classList.add('hidden');
+          });
+
+          // 선택한 탭만 보이기
+          document.getElementById(tabId).classList.remove('hidden');
+        }
+      </script>
+
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const urlParams = new URLSearchParams(window.location.search);
+          const defaultTabId = urlParams.get('tab') || 'profile';  // 기본값: profile
+          showTab(defaultTabId);
+
+          // 기본 탭 버튼에도 invert 효과 적용
+          const targetBtn = [...document.querySelectorAll('.tab-btn')].find(btn =>
+            btn.getAttribute('onclick')?.includes(defaultTabId)
+          );
+          targetBtn?.querySelector('.tab-icon')?.classList.add('invert');
+        });
+      </script>
 
 </body>
+
 </html>

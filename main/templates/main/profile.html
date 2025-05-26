@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mx-auto mt-10">
+    {% include "main/includes/profile_section.html" with profile_user=profile_user is_own_profile=is_own_profile %}
+  </div>
+{% endblock %}

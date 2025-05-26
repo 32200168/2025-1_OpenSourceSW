@@ -42,8 +42,11 @@ INSTALLED_APPS = [
     'start',
     'users',
     'main',
+<<<<<<< HEAD
     'music',
     'playlist',
+=======
+>>>>>>> main
 ]
 
 MIDDLEWARE = [
@@ -61,7 +64,10 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'templates',        
+            BASE_DIR / 'main' / 'templates', 
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,6 +78,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
