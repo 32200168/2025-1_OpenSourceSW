@@ -47,10 +47,6 @@ def taste_view(request):
         return redirect("/users/playlist/")
     return render(request, "users/taste.html")
 
-<<<<<<< HEAD
-def playlist_view(request):
-    return render(request, "users/playlist.html") # 다음으로 어디로???
-=======
 
 def playlist_view(request):
     if request.method == "POST":
@@ -60,4 +56,3 @@ def playlist_view(request):
         return redirect("main")  # 저장 후 main 페이지로 이동
 
     return render(request, "users/playlist.html")
->>>>>>> main
