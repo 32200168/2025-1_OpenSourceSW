@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'start',
     'users',
     'main',
+    'music',
+    'playlist',
 ]
 
 MIDDLEWARE = [
