@@ -27,7 +27,7 @@
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center space-x-2">
         <i class="fas fa-pencil-alt text-white"></i>
-        <input id="playlistName" type="text" value="My First Playlist"
+        <input id="playlistName" name="playlistName" type="text" value="My First Playlist" placeholder="제목 입력"
           class="bg-transparent border-white text-white font-semibold text-lg focus:outline-none focus:border-white" />
       </div>
 
@@ -313,6 +313,13 @@
     </div>
   `;
         playlistBox.appendChild(li);
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'song_ids';
+        input.value = opt.id;
+        form.appendChild(input);
+
       }
 
       renderOptions(options);

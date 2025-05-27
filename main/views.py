@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 import json
 
+from playlist.models import Playlist, PlaylistSong
+
 
 
 @login_required
@@ -19,11 +21,16 @@ def main_view(request):
     })
 
 
+
 def playlist_detail(request, playlist_id):
-    playlist = mock_playlists.get(playlist_id)
-    if not playlist:
-        raise Http404("플레이리스트 없음")
-    return render(request, 'main/playlist_detail.html', {'playlist': playlist})
+    playlist = get_object_or_404(Playlist, id=playlist_id)
+    songs = PlaylistSong.objects.filter(playlist=playlist).select_related(
+        "song", "song__artist", "song__album", "song__genre"
+    )
+    return render(request, "main/playlist_detail.html", {
+        "playlist": playlist,
+        "songs": songs,
+    })
 
 
 mock_playlists = {

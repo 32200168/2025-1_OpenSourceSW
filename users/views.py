@@ -3,7 +3,12 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.models import User
+
+from users.forms import PlaylistForm
+from .models import User, Playlist
+from playlist.models import PlaylistSong
+from music.models import Song, Genre
+
 
 
 def login_view(request):
@@ -47,12 +52,57 @@ def taste_view(request):
         return redirect("/users/playlist/")
     return render(request, "users/taste.html")
 
-
 def playlist_view(request):
     if request.method == "POST":
-        # 여기에 저장 처리 로직 추가
-        # 예: 폼에서 데이터 읽고 DB에 저장
+        title = request.POST.get("playlistName")
+        song_ids = request.POST.getlist("song_ids")
+        hashtags = request.POST.getlist("hashtags")
 
-        return redirect("main")  # 저장 후 main 페이지로 이동
+        if not title or not song_ids:
+            return render(request, "users/playlist.html", {"error": "제목 또는 곡이 비어있습니다."})
+
+        # Playlist 생성
+        playlist = Playlist.objects.create(
+            title=title,
+            user=request.user
+        )
+
+        # 곡 추가
+        for idx, sid in enumerate(song_ids):
+            song = Song.objects.get(id=sid)
+            PlaylistSong.objects.create(
+                playlist=playlist,
+                song=song,
+                order=idx
+            )
+
+        print("저장된 해시태그:", hashtags)  # 해시태그 출력만 (저장 X)
+
+        return redirect("main")  # 저장 후 메인 페이지 이동
 
     return render(request, "users/playlist.html")
+
+def save_playlist(request):
+    if request.method == 'POST':
+        title = request.POST.get('playlistName')  # 제목
+        hashtags = request.POST.getlist('hashtags')  # ['K-POP', '몽환적인']
+        song_ids = request.POST.getlist('song_ids')  # ['3', '5', '8']
+
+        # 플레이리스트 저장
+        playlist = Playlist.objects.create(
+            title=title,
+            user=request.user
+        )
+
+        # 곡 연결
+        for idx, sid in enumerate(song_ids):
+            song = Song.objects.get(id=sid)
+            PlaylistSong.objects.create(
+                playlist=playlist,
+                song=song,
+                order=idx
+            )
+
+        # 해시태그 저장 (해시태그 모델이 있다면 여기서 추가)
+
+        return redirect('playlist_detail', pk=playlist.id)

@@ -1,9 +1,5 @@
 from django.db import models
 
-# music/models.py
-
-from django.db import models
-
 #장르: 장르명
 class Genre(models.Model): 
     name = models.CharField(max_length=50)
