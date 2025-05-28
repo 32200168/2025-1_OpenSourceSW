@@ -1,10 +1,16 @@
 from django.db import models
-from .models import User
+from django.contrib.auth.models import User
 from music.models import Song
+
+
+class Hashtag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    users = models.ManyToManyField(User, related_name='hashtag_set')
 
 class Playlist(models.Model):
     title = models.CharField(max_length=100)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    hashtags = models.ManyToManyField(Hashtag, blank=True)
 
 class PlaylistSong(models.Model):
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
@@ -16,7 +22,7 @@ class PlaylistSong(models.Model):
 
 class Comment(models.Model):
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE) # type: ignore
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -7,29 +7,47 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
 import json
-
-from playlist.models import Playlist, PlaylistSong
+from playlist.models import Playlist, Hashtag, PlaylistSong
+from music.models import Song
+from users.models import UserTaste
 
 
 
 @login_required
 def main_view(request):
+    playlist_count = Playlist.objects.filter(owner=request.user).count()
+    my_playlists = Playlist.objects.filter(owner=request.user)
+
+    # 유저 취향 가져오기
+    try:
+        user_taste = UserTaste.objects.get(user=request.user)
+        hashtags = user_taste.hashtags.all()
+    except UserTaste.DoesNotExist:
+        hashtags = []
+
     return render(request, 'main/main.html', {
         'tab': request.GET.get('tab', 'home'),
         'playlists': [],
         'query': '', 
+        'playlist_count': playlist_count,
+        'my_playlists': my_playlists,
+        'hashtags': hashtags,  # ✅ 추가
     })
 
 
 
 def playlist_detail(request, playlist_id):
     playlist = get_object_or_404(Playlist, id=playlist_id)
-    songs = PlaylistSong.objects.filter(playlist=playlist).select_related(
-        "song", "song__artist", "song__album", "song__genre"
-    )
-    return render(request, "main/playlist_detail.html", {
-        "playlist": playlist,
-        "songs": songs,
+
+    # PlaylistSong을 order 순서대로 가져오기
+    songs = PlaylistSong.objects.filter(playlist=playlist).select_related('song').order_by('order')
+
+    hashtags = playlist.hashtags.all()  # 🔥 반드시 .all()
+
+    return render(request, 'main/playlist_detail.html', {
+        'playlist': playlist,
+        'songs': songs,
+        'hashtags': hashtags
     })
 
 
@@ -135,3 +153,44 @@ def hashtag_view(request):
         'hashtag_list': hashtag_list,
         'playlist_data': playlist_data
     })
+
+@login_required
+def create_playlist(request):
+    if request.method == 'POST':
+        title = request.POST.get("playlistName")
+        song_ids_json = request.POST.get("playlistData")
+        hashtag_list = request.POST.getlist("hashtags")
+
+        # 필수 체크
+        if not title or not song_ids_json:
+            return render(request, 'main/main.html', {
+                'error': '제목과 곡을 입력하세요.'
+            })
+
+        try:
+            song_ids = json.loads(song_ids_json)
+        except json.JSONDecodeError:
+            return render(request, 'main/main.html', {
+                'error': '곡 정보가 잘못되었습니다.'
+            })
+
+        # Playlist 저장
+        playlist = Playlist.objects.create(owner=request.user, title=title)
+
+        song_data_json = request.POST.get("playlistData")  # ← 곡 리스트 객체가 담긴 JSON
+        song_data = json.loads(song_data_json)
+
+        song_ids = [song_obj['id'] for song_obj in song_data]
+        songs = Song.objects.filter(id__in=song_ids)
+
+        for order, song in enumerate(songs):
+            PlaylistSong.objects.create(playlist=playlist, song=song, order=order)
+
+
+        for tag_name in hashtag_list:
+            tag, _ = Hashtag.objects.get_or_create(name=tag_name)
+            playlist.hashtags.add(tag)
+
+        return redirect('main')  # 저장 후 리다이렉트
+
+    return render(request, 'main/main.html')

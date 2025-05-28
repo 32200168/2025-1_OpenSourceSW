@@ -37,7 +37,7 @@
     </style>
 </div>
 
-<form id="tasteForm" method="POST" action="{% url 'playlist' %}">
+<form id="tasteForm" method="POST" action="{% url 'create_playlist' %}">
     {% csrf_token %}
 
     <div class="max-w-3xl text-white mx-auto bg-white/10 backdrop-blur-l rounded-xl p-6 shadow-2xl border border-white">
@@ -45,7 +45,7 @@
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center space-x-2">
                 <i class="fas fa-pencil-alt text-white"></i>
-                <input id="playlistName" type="text" value="My Playlist"
+                <input id="playlistName" name="playlistName" type="text" value="My Playlist"
                     class="bg-transparent border-white text-white font-semibold text-lg focus:outline-none focus:border-white" />
             </div>
         </div> <!-- 태그 선택 페이지에 연결 -->
@@ -250,7 +250,7 @@
     {% endif %}
 
     <div class="text-center mt-3 mb-20">
-        <button type="submit" class="mt-10 font-semibold text-white text-xl">저장하기</button>
+        <button type="submit" class="mt-10 fon  t-semibold text-white text-xl">저장하기</button>
     </div>
     </div>
 </form>

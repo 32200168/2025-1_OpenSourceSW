@@ -1,13 +1,14 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from django.contrib import messages
 
-from users.forms import PlaylistForm
-from .models import User, Playlist
-from playlist.models import PlaylistSong
-from music.models import Song, Genre
+from django.contrib.auth.models import User
+from playlist.models import Playlist, PlaylistSong
+from music.models import Song
+from .models import Hashtag, UserTaste
+
 
 
 
@@ -106,3 +107,20 @@ def save_playlist(request):
         # 해시태그 저장 (해시태그 모델이 있다면 여기서 추가)
 
         return redirect('playlist_detail', pk=playlist.id)
+    
+@login_required
+def save_user_taste(request):
+    if request.method == 'POST':
+        tag_names = request.POST.getlist('hashtags')
+
+        user_taste, _ = UserTaste.objects.get_or_create(user=request.user)
+        user_taste.hashtags.clear()  # 기존 취향 초기화
+
+        for name in tag_names:
+            tag, _ = Hashtag.objects.get_or_create(name=name)
+            user_taste.hashtags.add(tag)
+
+        return redirect('main')  # 저장 후 리디렉션
+
+    hashtags = Hashtag.objects.all()
+    return render(request, 'main/select_taste.html', {'hashtags': hashtags})

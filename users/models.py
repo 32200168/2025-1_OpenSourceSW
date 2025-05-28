@@ -1,6 +1,7 @@
 from django.db import models
-from .models import User
-from .models import Playlist
+from django.contrib.auth.models import User
+from playlist.models import Hashtag, Playlist
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -13,3 +14,10 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}의 프로필"
+    
+class UserTaste(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    hashtags = models.ManyToManyField(Hashtag)
+
+    def __str__(self):
+        return f"{self.user.username}의 취향"
