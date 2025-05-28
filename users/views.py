@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 
 from django.contrib.auth.models import User
-from playlist.models import Playlist, PlaylistSong
+from playlist.models import Playlist
 from music.models import Song
 from .models import Hashtag, UserTaste
 
@@ -68,15 +68,6 @@ def playlist_view(request):
             user=request.user
         )
 
-        # 곡 추가
-        for idx, sid in enumerate(song_ids):
-            song = Song.objects.get(id=sid)
-            PlaylistSong.objects.create(
-                playlist=playlist,
-                song=song,
-                order=idx
-            )
-
         print("저장된 해시태그:", hashtags)  # 해시태그 출력만 (저장 X)
 
         return redirect("main")  # 저장 후 메인 페이지 이동
@@ -104,8 +95,6 @@ def save_playlist(request):
                 order=idx
             )
 
-        # 해시태그 저장 (해시태그 모델이 있다면 여기서 추가)
-
         return redirect('playlist_detail', pk=playlist.id)
     
 @login_required
@@ -124,3 +113,4 @@ def save_user_taste(request):
 
     hashtags = Hashtag.objects.all()
     return render(request, 'main/select_taste.html', {'hashtags': hashtags})
+

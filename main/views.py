@@ -194,3 +194,4 @@ def create_playlist(request):
         return redirect('main')  # 저장 후 리다이렉트
 
     return render(request, 'main/main.html')
+
