@@ -7,10 +7,13 @@ class Hashtag(models.Model):
     name = models.CharField(max_length=50, unique=True)
     users = models.ManyToManyField(User, related_name='hashtag_set')
 
+    def __str__(self):
+        return f"{self.name}"
+    
 class Playlist(models.Model):
     title = models.CharField(max_length=100)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    hashtags = models.ManyToManyField(Hashtag, blank=True)
+    hashtags = models.ManyToManyField(Hashtag,related_name = "playlists", blank=True)
 
     def __str__(self):
         return f"{self.title}"

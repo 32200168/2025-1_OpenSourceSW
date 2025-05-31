@@ -30,6 +30,19 @@
         <div class="mt-10 text-white">
           <h2 class="text-xl font-bold text-center mb-4">🔍 해시태그로 플레이리스트 검색</h2>
 
+          <form action="{% url 'search' %}" method="get" id="hashtag-form">
+            <div class="flex flex-wrap gap-2 justify-center">
+              {% for tag in tags %}
+              <input type="checkbox" name="hashtags" value="{{ tag.name }}" id="tag-{{ forloop.counter }}"
+                class="hidden" {% if tag.name in selected_tags %}checked{% endif %} onchange="this.form.submit()">
+              <label for="tag-{{ forloop.counter }}" class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30 inline-block
+                    {% if tag.name in selected_tags %}ring-2 ring-white{% endif %}">
+                #{{ tag.name }}
+              </label>
+              {% endfor %}
+            </div>
+          </form>
+
           {% include "main/includes/search_hashtag.html" %}
 
           <div id="playlistResults" class="mt-6"></div>

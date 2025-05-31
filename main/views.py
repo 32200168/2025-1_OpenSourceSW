@@ -6,6 +6,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.http import JsonResponse
 import json
 from playlist.models import Playlist, Hashtag, PlaylistSong
 from music.models import Song
@@ -141,17 +142,21 @@ def recommendation_view(request):
     return render(request, 'main/recommendation.html', {'playlist': dummy_playlist})
 
 
-def hashtag_view(request):
-    hashtag_list = ['여행', '공부', '운동']
-    playlist_data = [
-        {'title': '여행할 때 듣는 음악', 'hashtags': ['여행']},
-        {'title': '공부 집중 음악', 'hashtags': ['공부']},
-        {'title': '헬스장 플레이리스트', 'hashtags': ['운동']},
-        {'title': '카페에서 듣는 음악', 'hashtags': ['공부', '여행']}
-    ]
-    return render(request, 'main/main.html', {
-        'hashtag_list': hashtag_list,
-        'playlist_data': playlist_data
+
+def hashtag_search_view(request):
+    selected_tags = request.GET.getlist('hashtags')
+    tags = Hashtag.objects.all()  # 전체 태그 for 버튼
+    if selected_tags:   
+        results = Playlist.objects.all()
+        for tag in selected_tags:
+            results = results.filter(hashtags__name=tag)
+    else:
+        results = None  # 혹은 Playlist.objects.none()
+
+    return render(request, 'main/search_hashtag.html', {
+        'tags': tags,
+        'selected_tags': selected_tags,
+        'results': results,
     })
 
 @login_required
