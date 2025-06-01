@@ -90,9 +90,11 @@
           class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
           <img src="{% static 'icons/search.png' %}" alt="Search" class="tab-icon w-9 h-9">
         </button>
-        <button onclick="showTab('add')" class="tab-btn w-1/4 flex justify-center items-center">
-          <img src="{% static 'icons/add.png' %}" alt="Add" class="tab-icon w-9 h-9">
-        </button>
+        <!-- ✅ 수정: 생성 페이지로 이동 -->
+        <a href="/users/playlist/" class="tab-btn w-1/4 flex justify-center items-center">
+        <img src="{% static 'icons/add.png' %}" alt="Add" class="tab-icon w-9 h-9">
+        </a>
+
         <button onclick="showTab('profile')"
           class="tab-btn w-1/4 flex justify-center items-center bg-transparent border-none outline-none focus:outline-none active:bg-transparent appearance-none">
           <img src="{% static 'icons/profile.png' %}" alt="Profile" class="tab-icon w-8 h-8">

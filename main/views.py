@@ -200,3 +200,6 @@ def create_playlist(request):
 
     return render(request, 'main/main.html')
 
+@login_required
+def playlist_from_main(request):
+    return render(request, 'playlist.html')  # 혹은 'main/playlist.html' 경로에 따라 조정
