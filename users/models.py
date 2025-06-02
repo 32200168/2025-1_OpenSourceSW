@@ -21,3 +21,14 @@ class UserTaste(models.Model):
 
     def __str__(self):
         return f"{self.user.username}의 취향"
+    
+class UserHashtagScore(models.Model):
+    user_taste = models.ForeignKey(UserTaste, on_delete=models.CASCADE)
+    hashtag = models.ForeignKey(Hashtag, on_delete=models.CASCADE)
+    score = models.IntegerField(default=1)
+
+    class Meta:
+        unique_together = ('user_taste', 'hashtag')  # 하나의 조합만 존재
+
+    def __str__(self):
+        return f"{self.user_taste.user.username} - {self.hashtag.name} ({self.score}점)"

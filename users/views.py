@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from playlist.models import Playlist, PlaylistSong
 from music.models import Song
-from .models import Hashtag, UserTaste
+from .models import Hashtag, UserHashtagScore, UserTaste
 
 
 
@@ -100,7 +100,7 @@ def save_playlist(request):
 @login_required
 def save_user_taste(request):
     if request.method == 'POST':
-        tag_names = request.POST.getlist('hashtags')
+        tag_names = request.POST.getlist('hashtags')    
 
         user_taste, _ = UserTaste.objects.get_or_create(user=request.user)
         user_taste.hashtags.clear()  # 기존 취향 초기화
@@ -108,6 +108,16 @@ def save_user_taste(request):
         for name in tag_names:
             tag, _ = Hashtag.objects.get_or_create(name=name)
             user_taste.hashtags.add(tag)
+        
+            # 점수 테이블 갱신
+            score_obj, created = UserHashtagScore.objects.get_or_create(
+                user_taste=user_taste,
+                hashtag=tag
+            )
+            if not created:
+                score_obj.score += 1  # 이미 있다면 점수 +1
+            score_obj.save()
+
 
         return redirect('main')  # 저장 후 리디렉션
 

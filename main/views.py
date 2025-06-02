@@ -11,7 +11,7 @@ import json
 
 from playlist.models import Playlist, Hashtag, PlaylistSong
 from music.models import Artist, Song
-from users.models import UserTaste
+from users.models import UserHashtagScore, UserTaste
 from django.views.decorators.csrf import csrf_exempt
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -216,6 +216,24 @@ def create_playlist(request):
                 }
             )
             PlaylistSong.objects.create(playlist=playlist, song=song, order=order)
+
+
+
+        # === [여기서 점수 증가] ===
+        user_taste, _ = UserTaste.objects.get_or_create(user=request.user)
+
+        for tag_name in hashtag_list:
+            tag, _ = Hashtag.objects.get_or_create(name=tag_name)
+
+            score_obj, created = UserHashtagScore.objects.get_or_create(
+                user_taste=user_taste,
+                hashtag=tag
+            )
+            if not created:
+                score_obj.score += 1
+            score_obj.save()
+
+
 
         for tag_name in hashtag_list:
             tag, _ = Hashtag.objects.get_or_create(name=tag_name)
