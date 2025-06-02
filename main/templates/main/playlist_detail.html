@@ -28,7 +28,9 @@
         <span id="likeCount" class="text-lg">0</span>
       </button>
     </div>
-    <p class="text-lg text-gray-200 mb-4">by @{{ playlist.owner.username }}</p>
+    <p class="text-lg text-gray-200 mb-4">
+      by <a href="{% url 'user_profile' playlist.owner.username %}" class="underline hover:text-white">@{{ playlist.owner.username }}</a>
+    </p>
 
 
     <div class="mt-3">

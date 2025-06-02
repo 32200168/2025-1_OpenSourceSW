@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ profile_user.username }}님의 프로필</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6 text-white" style="font-family: 'Noto Sans KR', sans-serif;">
+
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white/20 p-6 rounded-lg shadow">
+      <div class="flex items-start gap-6">
+        <img src="{% static 'profile_pic/default.png' %}" alt="profile" class="w-24 h-24 rounded-lg object-cover">
+
+        <div class="flex-1">
+          <h2 class="text-3xl font-semibold text-white">@{{ profile_user.username }}</h2>
+          <div class="flex gap-6 mt-2">
+            <div>
+              <p class="text-lg font-bold text-white">{{ playlist_count }}</p>
+              <p class="text-sm text-gray-300">Playlists</p>
+            </div>
+            <div>
+              <p class="text-lg font-bold text-white">{{ follower_count }}</p>
+              <p class="text-sm text-gray-300">Followers</p>
+            </div>
+            <div>
+              <p class="text-lg font-bold text-white">{{ following_count }}</p>
+              <p class="text-sm text-gray-300">Following</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <div class="flex gap-4 mb-4">
+          <button onclick="showPLTab('myPL')" class="bg-white/20 text-white px-4 py-2 rounded hover:bg-white/30">내 플레이리스트</button>
+          <button onclick="showPLTab('likedPL')" class="bg-white/20 text-white px-4 py-2 rounded hover:bg-white/30">좋아요한 플레이리스트</button>
+        </div>
+
+        <div id="myPL" class="pl-tab">
+          <ul class="space-y-2">
+            {% for playlist in playlists %}
+            <li class="bg-white/10 p-3 rounded text-white hover:bg-white/20">
+              <a href="{% url 'playlist_detail' playlist_id=playlist.id %}" class="block w-full h-full">
+                🎵 {{ playlist.title }}
+              </a>
+            </li>
+            {% empty %}
+            <li class="text-gray-300">아직 저장된 플레이리스트가 없습니다.</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div id="likedPL" class="pl-tab hidden">
+          <ul
