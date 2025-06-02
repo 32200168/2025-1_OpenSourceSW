@@ -11,6 +11,11 @@ import json
 from playlist.models import Playlist, Hashtag, PlaylistSong
 from music.models import Song
 from users.models import UserTaste
+from django.views.decorators.csrf import csrf_exempt
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+import os
+from dotenv import load_dotenv
 
 
 
@@ -199,4 +204,29 @@ def create_playlist(request):
         return redirect('main')  # 저장 후 리다이렉트
 
     return render(request, 'main/main.html')
+
+load_dotenv()
+sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
+    client_id=os.getenv('SPOTIPY_CLIENT_ID'),
+    client_secret=os.getenv('SPOTIPY_CLIENT_SECRET')
+))
+# Spotify 검색 API
+@csrf_exempt
+def spotify_search(request):
+    query = request.GET.get("q", "")
+    if not query:
+        return JsonResponse({"results": []})
+
+    results = sp.search(q=query, type='track', limit=10)
+    tracks = []
+    for item in results['tracks']['items']:
+        tracks.append({
+            'title': item['name'],
+            'artist': item['artists'][0]['name'],
+            'image': item['album']['images'][0]['url'],
+            'url': item['external_urls']['spotify'],
+            'id': item['id'],
+            'embed': f"https://open.spotify.com/embed/track/{item['id']}"
+        })
+    return JsonResponse({'results': tracks})
 

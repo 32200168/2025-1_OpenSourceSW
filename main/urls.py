@@ -9,6 +9,7 @@ urlpatterns = [
     path('search/', views.hashtag_search_view, name='search'),
     path('playlist/', create_playlist, name='create_playlist'),
     path('playlist/<int:playlist_id>/', playlist_detail, name='playlist_detail'),
+    path("api/search/", views.spotify_search, name="spotify_search"),
 
 ]
 

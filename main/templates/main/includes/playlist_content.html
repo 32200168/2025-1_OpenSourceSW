@@ -255,3 +255,74 @@
     </div>
     </div>
 </form>
+
+<script>const searchInput = document.getElementById('searchInput');
+    const optionsList = document.getElementById('optionsList');
+    const selectedText = document.getElementById('selectedText');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const selectArrow = document.getElementById('selectArrow');
+
+    // ⭐ 검색창에 포커스되면 드롭다운 메뉴 열기
+    searchInput.addEventListener('focus', () => {
+        dropdownMenu.classList.remove('hidden');
+        selectArrow.style.transform = 'rotate(180deg)';
+    });
+
+    searchInput.addEventListener('input', async (e) => {
+        const query = e.target.value.trim();
+        if (!query) {
+            renderOptions([]);
+            return;
+        }
+        const results = await searchSpotify(query);
+        renderOptions(results);
+    });
+
+    async function searchSpotify(query) {
+        const response = await fetch('/main/api/search/?q=' + encodeURIComponent(query));
+        const data = await response.json();
+        return data.results;
+    }
+
+    function renderOptions(filteredOptions) {
+        optionsList.innerHTML = '';
+        filteredOptions.forEach(opt => {
+            const li = document.createElement('li');
+            li.className = 'px-4 py-2 hover:bg-white/10 cursor-pointer';
+            li.innerHTML = `
+            <div class="flex items-center space-x-2.5">
+                <img src="${opt.image}" alt="앨범 아트" class="h-10 w-10 rounded-lg object-cover">
+                <div>
+                    <p class="text-sm font-medium text-white">${opt.title}</p>
+                    <p class="text-xs text-gray-300">${opt.artist}</p>
+                </div>
+            </div>
+        `;
+            li.addEventListener('click', () => {
+                selectedText.textContent = opt.title;
+                dropdownMenu.classList.add('hidden');
+                selectArrow.style.transform = 'rotate(0deg)';
+                addToPlaylist(opt);
+            });
+            optionsList.appendChild(li);
+        });
+    }
+
+    // ⭐ 필수: 실제로 곡을 플레이리스트에 추가하는 함수(예시)
+    function addToPlaylist(opt) {
+        const playlistBox = document.getElementById('playlistBox');
+        const li = document.createElement('li');
+        li.className = 'bg-gray-200/25 p-2 rounded-lg flex items-center space-x-2';
+        li.innerHTML = `
+        <img src="${opt.image}" class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
+        <div>
+            <h3 class="text-sm font-semibold">${opt.title}</h3>
+            <p class="text-xs text-gray-200">${opt.artist}</p>
+        </div>
+    `;
+        playlistBox.appendChild(li);
+
+        // 추가로 곡 데이터를 히든 input에 넣어주는 코드도 작성 필요(기능에 따라)
+    }
+
+</script>

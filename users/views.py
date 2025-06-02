@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 
 from django.contrib.auth.models import User
-from playlist.models import Playlist
+from playlist.models import Playlist, PlaylistSong
 from music.models import Song
 from .models import Hashtag, UserTaste
 
@@ -113,4 +113,6 @@ def save_user_taste(request):
 
     hashtags = Hashtag.objects.all()
     return render(request, 'main/select_taste.html', {'hashtags': hashtags})
+
+
 
