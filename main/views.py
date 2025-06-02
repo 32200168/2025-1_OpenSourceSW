@@ -173,6 +173,7 @@ def hashtag_search_ajax(request):
             playlists = playlists.filter(hashtags__name=tag)
         for playlist in playlists:
             results.append({
+                'id': playlist.id,
                 'title': playlist.title,
                 'hashtags': [tag.name for tag in playlist.hashtags.all()],
             })

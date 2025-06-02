@@ -55,11 +55,11 @@
                       resultsDiv.innerHTML = '<p class="mt-4 text-center">해당 해시태그가 포함된 플레이리스트가 없습니다.</p>';
                     } else {
                       resultsDiv.innerHTML = data.results.map(pl => `
-              <div class="mb-4 p-4 rounded-lg bg-white bg-opacity-10">
-                <h3 class="text-lg font-bold">${pl.title}</h3>
-                <p>${pl.hashtags.map(tag => '#' + tag).join(' ')}</p>
-              </div>
-            `).join('');
+                        <div class="mb-4 p-4 rounded-lg bg-white bg-opacity-10 cursor-pointer" onclick="location.href='/main/playlist/${pl.id}/'">
+                          <h3 class="text-lg font-bold">${pl.title}</h3>
+                          <p>${pl.hashtags.map(tag => '#' + tag).join(' ')}</p>
+                        </div>
+                      `).join('');
                     }
                   });
               }
