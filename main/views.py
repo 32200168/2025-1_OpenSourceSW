@@ -253,3 +253,11 @@ def spotify_search(request):
         })
     return JsonResponse({'results': tracks})
 
+def delete_playlist(request, playlist_id):
+    playlist = get_object_or_404(Playlist, id=playlist_id)
+
+    if playlist.owner != request.user:
+        raise Http404("삭제 권한이 없습니다.")
+
+    playlist.delete()
+    return redirect('main')

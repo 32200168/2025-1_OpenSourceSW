@@ -33,7 +33,6 @@
 
     <div class="mt-3">
       <div class="flex flex-wrap gap-2 mb-5">
-        {% comment %} 아래는 나중에 DB에서 불러올 반복문 자리에 들어갈 수 있도록 설계 {% endcomment %}
         {% for tag in playlist.hashtags.all %}
         <span class="px-3 py-1 rounded-full bg-white/10 text-sm text-white">#{{ tag.name }}</span>
         {% endfor %}
@@ -67,6 +66,15 @@
         {% endfor %}
       </ul>
     </div>
+
+    {% if request.user == playlist.owner %}
+    <form action="{% url 'delete_playlist' playlist.id %}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');" class="mt-6">
+      {% csrf_token %}
+      <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow">
+        🗑 플레이리스트 삭제
+      </button>
+    </form>
+    {% endif %}    
 
     <script>
       let liked = false;
