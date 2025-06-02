@@ -116,15 +116,6 @@
           const checkboxes = document.querySelectorAll('input[type="checkbox"][name="hashtags"]');
           const tags = document.querySelectorAll(".tag");
 
-          // 곡 목록 전역 변수
-          window.playlist = [];
-
-          const options = [
-            { id: 1, title: '노래 제목 A', artist: '아티스트 A' },
-            { id: 2, title: '노래 제목 B', artist: '아티스트 B' },
-            { id: 3, title: '노래 제목 C', artist: '아티스트 C' }
-          ];
-
           // 드롭다운 관련
           selectButton.addEventListener('click', () => {
             const isHidden = dropdownMenu.classList.contains('hidden');
