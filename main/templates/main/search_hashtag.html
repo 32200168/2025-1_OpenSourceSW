@@ -1,0 +1,18 @@
+{% if results %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+    {% for playlist in results %}
+      <div class="bg-white/20 p-4 rounded-xl shadow-lg text-white">
+        <h3 class="text-lg font-bold mb-2">{{ playlist.title }}</h3>
+        <p class="text-sm text-gray-200 mb-1">by {{ playlist.owner.username }}</p>
+        <div class="flex flex-wrap gap-1">
+          {% for tag in playlist.hashtags.all %}
+            <span class="bg-white bg-opacity-30 text-sm px-2 py-1 rounded-full">#{{ tag.name }}</span>
+          {% endfor %}
+        </div>
+        <a href="{% url 'playlist_detail' playlist.id %}" class="mt-2 inline-block text-blue-200 hover:text-blue-100 text-sm">상세보기</a>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="mt-4 text-center text-white">해당 해시태그가 포함된 플레이리스트가 없습니다.</p>
+{% endif %}

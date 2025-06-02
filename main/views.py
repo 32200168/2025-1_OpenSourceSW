@@ -145,19 +145,23 @@ def recommendation_view(request):
 
 def hashtag_search_view(request):
     selected_tags = request.GET.getlist('hashtags')
-    tags = Hashtag.objects.all()  # 전체 태그 for 버튼
-    if selected_tags:   
+    tags = Hashtag.objects.all()  # 모든 해시태그
+
+    if selected_tags:
+        # selected_tags 리스트에 해당하는 모든 플레이리스트 가져오기
         results = Playlist.objects.all()
         for tag in selected_tags:
             results = results.filter(hashtags__name=tag)
+        results = results.distinct()
     else:
-        results = None  # 혹은 Playlist.objects.none()
+        results = Playlist.objects.none()
 
     return render(request, 'main/search_hashtag.html', {
         'tags': tags,
         'selected_tags': selected_tags,
         'results': results,
     })
+
 
 @login_required
 def create_playlist(request):

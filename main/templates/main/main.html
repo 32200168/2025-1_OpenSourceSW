@@ -48,25 +48,9 @@
           <div id="playlistResults" class="mt-6"></div>
         </div>
 
-        <script>
-          const playlistData = [
-            { title: '밤 드라이브 음악', hashtags: ['드라이브', '시티팝'] },
-            { title: '감성 잔잔 플레이리스트', hashtags: ['감성적인', '잔잔한'] },
-            { title: '수능금지곡 모음', hashtags: ['수능금지곡'] },
-            { title: '카페 분위기 음악', hashtags: ['카페분위기'] }
-          ];
+        
 
-          document.querySelectorAll('.tag').forEach(tagEl => {
-            tagEl.addEventListener('click', () => {
-              const clickedTag = tagEl.textContent.trim().replace('#', '');
-              const filtered = playlistData.filter(p => p.hashtags.includes(clickedTag));
-              const resultDiv = document.getElementById('playlistResults');
-              resultDiv.innerHTML = filtered.length
-                ? '<ul>' + filtered.map(p => `<li class="my-2">🎵 ${p.title}</li>`).join('') + '</ul>'
-                : '<p class="mt-4 text-center">해당 해시태그가 포함된 플레이리스트가 없습니다.</p>';
-            });
-          });
-        </script>
+         
       </div>
 
       <!--플리 생성 탭-->
