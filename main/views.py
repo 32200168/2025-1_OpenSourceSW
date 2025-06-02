@@ -19,6 +19,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import os
 from dotenv import load_dotenv
 
+from playlist.models import PlaylistHashtagScore, Hashtag
 
 
 @login_required
@@ -204,7 +205,6 @@ def create_playlist(request):
         playlist = Playlist.objects.create(owner=request.user, title=title)
 
         for order, song_obj in enumerate(song_data):
-            # 아티스트 처리
             artist_name = song_obj['artist']
             artist, _ = Artist.objects.get_or_create(name=artist_name, defaults={'detail': ''})
 
@@ -220,14 +220,13 @@ def create_playlist(request):
             )
             PlaylistSong.objects.create(playlist=playlist, song=song, order=order)
 
-
-
-        # === [여기서 점수 증가] ===
+        # === [유저 취향 점수 저장] ===
         user_taste, _ = UserTaste.objects.get_or_create(user=request.user)
 
         for tag_name in hashtag_list:
             tag, _ = Hashtag.objects.get_or_create(name=tag_name)
 
+            # 사용자 점수 저장
             score_obj, created = UserHashtagScore.objects.get_or_create(
                 user_taste=user_taste,
                 hashtag=tag
@@ -236,10 +235,16 @@ def create_playlist(request):
                 score_obj.score += 1
             score_obj.save()
 
+            # 플레이리스트 점수 저장
+            pl_score, pl_created = PlaylistHashtagScore.objects.get_or_create(
+                playlist=playlist,
+                hashtag=tag
+            )
+            if not pl_created:
+                pl_score.score += 1
+            pl_score.save()
 
-
-        for tag_name in hashtag_list:
-            tag, _ = Hashtag.objects.get_or_create(name=tag_name)
+            # 태그 연결
             playlist.hashtags.add(tag)
 
         return redirect('main')
@@ -273,14 +278,44 @@ def spotify_search(request):
         })
     return JsonResponse({'results': tracks})
 
+
+@login_required
 def delete_playlist(request, playlist_id):
     playlist = get_object_or_404(Playlist, id=playlist_id)
 
     if playlist.owner != request.user:
         raise Http404("삭제 권한이 없습니다.")
 
+    # === 해시태그 점수 감소 ===
+    hashtag_list = playlist.hashtags.all()
+
+    try:
+        user_taste = UserTaste.objects.get(user=request.user)
+    except UserTaste.DoesNotExist:
+        user_taste = None
+
+    for tag in hashtag_list:
+        # 유저 점수 줄이기
+        if user_taste:
+            try:
+                user_score = UserHashtagScore.objects.get(user_taste=user_taste, hashtag=tag)
+                user_score.score -= 1
+                if user_score.score <= 0:
+                    user_score.delete()
+                else:
+                    user_score.save()
+            except UserHashtagScore.DoesNotExist:
+                pass
+
+        # 플레이리스트 점수 삭제
+        PlaylistHashtagScore.objects.filter(playlist=playlist, hashtag=tag).delete()
+
+    # === 플레이리스트 삭제 ===
     playlist.delete()
+
     return redirect('main')
+
+
 
 @login_required
 def user_profile_view(request, username):
@@ -301,3 +336,14 @@ def user_profile_view(request, username):
         'follower_count': follower_count,
         'following_count': following_count,
     })
+
+def save_playlist_hashtag_scores(playlist, hashtag_names):
+    for tag_name in hashtag_names:
+        tag, _ = Hashtag.objects.get_or_create(name=tag_name)
+        score_obj, created = PlaylistHashtagScore.objects.get_or_create(
+            playlist=playlist,
+            hashtag=tag
+        )
+        if not created:
+            score_obj.score += 1
+        score_obj.save()

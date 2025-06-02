@@ -40,3 +40,8 @@ class Like(models.Model):
 
     class Meta:
         unique_together = ('playlist', 'user')
+
+class PlaylistHashtagScore(models.Model):
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+    hashtag = models.ForeignKey(Hashtag, on_delete=models.CASCADE)
+    score = models.IntegerField(default=1)
