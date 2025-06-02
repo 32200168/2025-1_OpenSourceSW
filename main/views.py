@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import JsonResponse
 import json
+
 from playlist.models import Playlist, Hashtag, PlaylistSong
 from music.models import Artist, Song
 from users.models import UserTaste
@@ -38,7 +39,8 @@ def main_view(request):
         'playlist_count': playlist_count,
         'my_playlists': my_playlists,
         'hashtags': hashtags,  # ✅ 추가
-    })
+}
+)
 
 
 
@@ -149,19 +151,33 @@ def recommendation_view(request):
 
 def hashtag_search_view(request):
     selected_tags = request.GET.getlist('hashtags')
-    tags = Hashtag.objects.all()  # 전체 태그 for 버튼
+    tags = Hashtag.objects.all().distinct()
     if selected_tags:
         results = Playlist.objects.all()
         for tag in selected_tags:
             results = results.filter(hashtags__name=tag)
     else:
-        results = None  # or Playlist.objects.none()
-
-    return render(request, 'main/search_hashtag.html', {
+        results = None
+    return render(request, 'main/main.html', {
         'tags': tags,
         'selected_tags': selected_tags,
         'results': results,
     })
+
+def hashtag_search_ajax(request):
+    selected_tags = request.GET.getlist('hashtags')
+    results = []
+    if selected_tags:
+        playlists = Playlist.objects.all()
+        for tag in selected_tags:
+            playlists = playlists.filter(hashtags__name=tag)
+        for playlist in playlists:
+            results.append({
+                'title': playlist.title,
+                'hashtags': [tag.name for tag in playlist.hashtags.all()],
+            })
+    return JsonResponse({'results': results})
+
 
 @login_required
 def create_playlist(request):

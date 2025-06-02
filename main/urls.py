@@ -10,6 +10,6 @@ urlpatterns = [
     path('playlist/', create_playlist, name='create_playlist'),
     path('playlist/<int:playlist_id>/', playlist_detail, name='playlist_detail'),
     path("api/search/", views.spotify_search, name="spotify_search"),
-
+    path('api/search_hashtag/', views.hashtag_search_ajax, name='hashtag_search_ajax'),
 ]
 

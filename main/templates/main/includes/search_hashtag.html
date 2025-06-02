@@ -162,34 +162,3 @@
         </span>
     </div>
 </form>
-
-
-<script>
-    function toggleCheckbox(span) {
-        // span 바로 앞의 input[type=checkbox] 찾기
-        const input = span.previousElementSibling;
-        if (input && input.type === 'checkbox') {
-            input.checked = !input.checked;    // 체크박스 상태 토글
-            span.closest('form').submit();     // 폼 전송
-        }
-    }
-
-</script>
-
-<!-- 검색 결과 출력 영역 -->
-<div id="playlistResults" class="mt-6 text-white">
-    {% if results %}
-    {% for playlist in results %}
-    <div class="mb-4 p-4 rounded-lg bg-white bg-opacity-10">
-        <h3 class="text-lg font-bold">{{ playlist.title }}</h3>
-        <p>
-            {% for tag in playlist.hashtags.all %}
-            #{{ tag.name }}
-            {% endfor %}
-        </p>
-    </div>
-    {% endfor %}
-    {% else %}
-    <p class="mt-4 text-center">해당 해시태그가 포함된 플레이리스트가 없습니다.</p>
-    {% endif %}
-</div>

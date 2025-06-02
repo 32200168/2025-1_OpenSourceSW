@@ -30,43 +30,44 @@
         <div class="mt-10 text-white">
           <h2 class="text-xl font-bold text-center mb-4">🔍 해시태그로 플레이리스트 검색</h2>
 
-          <form action="{% url 'search' %}" method="get" id="hashtag-form">
-            <div class="flex flex-wrap gap-2 justify-center">
-              {% for tag in tags %}
-              <input type="checkbox" name="hashtags" value="{{ tag.name }}" id="tag-{{ forloop.counter }}"
-                class="hidden" {% if tag.name in selected_tags %}checked{% endif %} onchange="this.form.submit()">
-              <label for="tag-{{ forloop.counter }}" class="tag px-4 py-1 rounded-full text-white font-medium cursor-pointer bg-white bg-opacity-30 inline-block
-                    {% if tag.name in selected_tags %}ring-2 ring-white{% endif %}">
-                #{{ tag.name }}
-              </label>
-              {% endfor %}
-            </div>
-          </form>
-
           {% include "main/includes/search_hashtag.html" %}
 
           <div id="playlistResults" class="mt-6"></div>
         </div>
 
         <script>
-          const playlistData = [
-            { title: '밤 드라이브 음악', hashtags: ['드라이브', '시티팝'] },
-            { title: '감성 잔잔 플레이리스트', hashtags: ['감성적인', '잔잔한'] },
-            { title: '수능금지곡 모음', hashtags: ['수능금지곡'] },
-            { title: '카페 분위기 음악', hashtags: ['카페분위기'] }
-          ];
 
-          document.querySelectorAll('.tag').forEach(tagEl => {
-            tagEl.addEventListener('click', () => {
-              const clickedTag = tagEl.textContent.trim().replace('#', '');
-              const filtered = playlistData.filter(p => p.hashtags.includes(clickedTag));
-              const resultDiv = document.getElementById('playlistResults');
-              resultDiv.innerHTML = filtered.length
-                ? '<ul>' + filtered.map(p => `<li class="my-2">🎵 ${p.title}</li>`).join('') + '</ul>'
-                : '<p class="mt-4 text-center">해당 해시태그가 포함된 플레이리스트가 없습니다.</p>';
+          document.querySelectorAll('.tag').forEach(span => {
+            span.addEventListener('click', function () {
+              const input = this.previousElementSibling;
+              if (input && input.type === 'checkbox') {
+                input.checked = !input.checked;
+                // AJAX: 체크된 해시태그 value 모으기
+                const checkedTags = Array.from(document.querySelectorAll('input[type="checkbox"][name="hashtags"]:checked')).map(cb => cb.value);
+
+                // 새로고침 없이 결과만 바꾸는 fetch!
+                fetch(`/main/api/search_hashtag/?${checkedTags.map(tag => `hashtags=${encodeURIComponent(tag)}`).join('&')}`)
+                  .then(response => response.json())
+                  .then(data => {
+                    // 결과 영역 업데이트
+                    const resultsDiv = document.getElementById('playlistResults');
+                    if (data.results.length === 0) {
+                      resultsDiv.innerHTML = '<p class="mt-4 text-center">해당 해시태그가 포함된 플레이리스트가 없습니다.</p>';
+                    } else {
+                      resultsDiv.innerHTML = data.results.map(pl => `
+              <div class="mb-4 p-4 rounded-lg bg-white bg-opacity-10">
+                <h3 class="text-lg font-bold">${pl.title}</h3>
+                <p>${pl.hashtags.map(tag => '#' + tag).join(' ')}</p>
+              </div>
+            `).join('');
+                    }
+                  });
+              }
             });
           });
+
         </script>
+
       </div>
 
       <!--플리 생성 탭-->
@@ -149,14 +150,14 @@
               const li = document.createElement('li');
               li.className = 'px-4 py-2 hover:bg-white/10 cursor-pointer';
               li.innerHTML = `
-      <div class="flex items-center space-x-2.5">
-        <img src="${opt.image}" alt="앨범 아트" class="h-10 w-10 rounded-lg object-cover">
-        <div>
-          <p class="text-sm font-medium text-white">${opt.title}</p>
-          <p class="text-xs text-gray-300">${opt.artist}</p>
-        </div>
+  <div class="flex items-center space-x-2.5">
+    <img src="${opt.image}" alt="앨범 아트" class="h-10 w-10 rounded-lg object-cover">
+      <div>
+        <p class="text-sm font-medium text-white">${opt.title}</p>
+        <p class="text-xs text-gray-300">${opt.artist}</p>
       </div>
-    `;
+  </div>
+  `;
               li.addEventListener('click', () => {
                 selectedText.textContent = opt.title;
                 dropdownMenu.classList.add('hidden');
@@ -190,7 +191,7 @@
             const li = document.createElement('li');
             li.className = 'bg-gray-200/25 p-2 rounded-lg flex items-center space-x-2';
             li.innerHTML = `
-    <img src="${opt.image}" class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
+  <img src="${opt.image}" class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
     <div>
       <h3 class="text-sm font-semibold">${opt.title}</h3>
       <p class="text-xs text-gray-200">${opt.artist}</p>
@@ -311,11 +312,11 @@
           const modal = document.createElement('div');
           modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
           modal.innerHTML = `
-      <div class="bg-white w-96 max-h-[80vh] overflow-y-auto rounded-lg p-6">
-        <h2 class="text-2xl font-semibold mb-4">${pl.title}</h2>
-        <ul class="mb-4">${pl.songs.map(song => `<li class="py-1 border-b">${song}</li>`).join('')}</ul>
-        <button onclick="document.body.removeChild(this.parentElement.parentElement)" class="w-full mt-4 bg-gray-200 hover:bg-gray-300 rounded py-2">닫기</button>
-      </div>
+    <div class="bg-white w-96 max-h-[80vh] overflow-y-auto rounded-lg p-6">
+      <h2 class="text-2xl font-semibold mb-4">${pl.title}</h2>
+      <ul class="mb-4">${pl.songs.map(song => `<li class="py-1 border-b">${song}</li>`).join('')}</ul>
+      <button onclick="document.body.removeChild(this.parentElement.parentElement)" class="w-full mt-4 bg-gray-200 hover:bg-gray-300 rounded py-2">닫기</button>
+    </div>
     `;
           document.body.appendChild(modal);
         }
