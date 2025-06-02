@@ -11,5 +11,9 @@ urlpatterns = [
     path('playlist/<int:playlist_id>/', playlist_detail, name='playlist_detail'),
     path("api/search/", views.spotify_search, name="spotify_search"),
     path('api/search_hashtag/', views.hashtag_search_ajax, name='hashtag_search_ajax'),
+    path('playlist/<int:playlist_id>/', views.playlist_detail, name='playlist_detail'),
+    path('playlist/<int:playlist_id>/delete/', views.delete_playlist, name='delete_playlist'),
+    path('profile/<str:username>/', views.user_profile_view, name='user_profile'),
+
 ]
 

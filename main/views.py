@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import JsonResponse
 import json
+from users.models import Profile
 
 from playlist.models import Playlist, Hashtag, PlaylistSong
 from music.models import Artist, Song
@@ -50,7 +51,7 @@ def playlist_detail(request, playlist_id):
     # PlaylistSong을 order 순서대로 가져오기
     songs = PlaylistSong.objects.filter(playlist=playlist).select_related('song').order_by('order')
 
-    hashtags = playlist.hashtags.all()  # 🔥 반드시 .all()
+    hashtags = playlist.hashtags.all()
 
     return render(request, 'main/playlist_detail.html', {
         'playlist': playlist,
@@ -173,7 +174,9 @@ def hashtag_search_ajax(request):
             playlists = playlists.filter(hashtags__name=tag)
         for playlist in playlists:
             results.append({
+                'id': playlist.id,
                 'title': playlist.title,
+                'owner': playlist.owner.username,
                 'hashtags': [tag.name for tag in playlist.hashtags.all()],
             })
     return JsonResponse({'results': results})
@@ -270,3 +273,31 @@ def spotify_search(request):
         })
     return JsonResponse({'results': tracks})
 
+def delete_playlist(request, playlist_id):
+    playlist = get_object_or_404(Playlist, id=playlist_id)
+
+    if playlist.owner != request.user:
+        raise Http404("삭제 권한이 없습니다.")
+
+    playlist.delete()
+    return redirect('main')
+
+@login_required
+def user_profile_view(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=profile_user)  # Profile 인스턴스 가져오기
+
+    playlists = Playlist.objects.filter(owner=profile_user)
+    playlist_count = playlists.count()
+
+    follower_count = profile.followers.count()
+    following_count = profile.following.count()
+
+    return render(request, 'main/profile_page.html', {
+        'profile_user': profile_user,
+        'is_own_profile': request.user == profile_user,
+        'playlists': playlists,
+        'playlist_count': playlist_count,
+        'follower_count': follower_count,
+        'following_count': following_count,
+    })
