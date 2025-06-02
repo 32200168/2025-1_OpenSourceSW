@@ -132,13 +132,15 @@
             }
           });
 
-          searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filtered = options.filter(o =>
-              o.title.toLowerCase().includes(searchTerm) ||
-              o.artist.toLowerCase().includes(searchTerm)
-            );
-            renderOptions(filtered);
+          searchInput.addEventListener('input', async (e) => {
+            const query = e.target.value.trim();
+            if (!query) {
+              renderOptions([]);
+              return;
+            }
+            // 실시간으로 서버에서 곡 리스트 fetch!
+            const results = await searchSpotify(query);
+            renderOptions(results);
           });
 
           function renderOptions(filteredOptions) {
@@ -147,14 +149,14 @@
               const li = document.createElement('li');
               li.className = 'px-4 py-2 hover:bg-white/10 cursor-pointer';
               li.innerHTML = `
-          <div class="flex items-center space-x-2.5">
-            <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="앨범 아트" class="h-10 w-10 rounded-lg object-cover">
-            <div>
-              <p class="text-sm font-medium text-white">${opt.title}</p>
-              <p class="text-xs text-gray-300">${opt.artist}</p>
-            </div>
-          </div>
-        `;
+      <div class="flex items-center space-x-2.5">
+        <img src="${opt.image}" alt="앨범 아트" class="h-10 w-10 rounded-lg object-cover">
+        <div>
+          <p class="text-sm font-medium text-white">${opt.title}</p>
+          <p class="text-xs text-gray-300">${opt.artist}</p>
+        </div>
+      </div>
+    `;
               li.addEventListener('click', () => {
                 selectedText.textContent = opt.title;
                 dropdownMenu.classList.add('hidden');
@@ -166,29 +168,38 @@
           }
 
           function addToPlaylist(opt) {
-            const playlist = window.playlist;
+            const playlist = window.playlist || [];
+            window.playlist = playlist;
             if (playlist.length >= 10) {
               alert('최대 10곡까지 추가할 수 있습니다.');
               return;
             }
-            if (playlist.find(item => item.title === opt.title && item.artist === opt.artist)) {
+            if (playlist.find(item => item.id === opt.id)) {
               alert('이미 추가된 곡입니다.');
               return;
             }
-
-            playlist.push(opt);
+            playlist.push({
+              id: opt.id,
+              title: opt.title,
+              artist: opt.artist,
+              image: opt.image,
+              url: opt.url,
+              embed: opt.embed
+            });
 
             const li = document.createElement('li');
             li.className = 'bg-gray-200/25 p-2 rounded-lg flex items-center space-x-2';
             li.innerHTML = `
-        <img src="https://cdn.startupful.io/img/app_logo/no_img.png" class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
-        <div>
-          <h3 class="text-sm font-semibold">${opt.title}</h3>
-          <p class="text-xs text-gray-200">${opt.artist}</p>
-        </div>
-      `;
+    <img src="${opt.image}" class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
+    <div>
+      <h3 class="text-sm font-semibold">${opt.title}</h3>
+      <p class="text-xs text-gray-200">${opt.artist}</p>
+      <a href="${opt.url}" target="_blank" class="text-xs text-blue-200 underline block">스포티파이로 이동</a>
+    </div>
+  `;
             playlistBox.appendChild(li);
           }
+
 
           // 해시태그 토글
           tags.forEach((tag, index) => {

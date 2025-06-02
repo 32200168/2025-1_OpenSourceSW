@@ -14,6 +14,7 @@ class Playlist(models.Model):
     title = models.CharField(max_length=100)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     hashtags = models.ManyToManyField(Hashtag,related_name = "playlists", blank=True)
+    songs = models.ManyToManyField(Song, through='PlaylistSong', related_name='playlists')
 
     def __str__(self):
         return f"{self.title}"
@@ -28,6 +29,10 @@ class PlaylistSong(models.Model):
     
     class Meta:
         ordering = ['order']
+
+    class Meta:
+        unique_together = ('playlist', 'song')
+
 
 class Like(models.Model):
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)

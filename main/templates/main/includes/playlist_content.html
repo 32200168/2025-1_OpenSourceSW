@@ -251,12 +251,14 @@
     {% endif %}
 
     <div class="text-center mt-3 mb-20">
-        <button type="submit" class="mt-10 fon  t-semibold text-white text-xl">저장하기</button>
+        <button type="submit" class="mt-10 font-semibold text-white text-xl">저장하기</button>
     </div>
+
     </div>
 </form>
 
-<script>const searchInput = document.getElementById('searchInput');
+<script>
+    const searchInput = document.getElementById('searchInput');
     const optionsList = document.getElementById('optionsList');
     const selectedText = document.getElementById('selectedText');
     const dropdownMenu = document.getElementById('dropdownMenu');
@@ -322,7 +324,19 @@
     `;
         playlistBox.appendChild(li);
 
+        window.playlist.push({
+            id: opt.id,         // 필수: 곡의 DB id
+            title: opt.title,
+            artist: opt.artist,
+            image: opt.image
+        });
+
         // 추가로 곡 데이터를 히든 input에 넣어주는 코드도 작성 필요(기능에 따라)
     }
+
+    form.addEventListener("submit", function (e) {
+        // 유효성 검사(3곡 이상, 해시태그 3개 이상) 생략
+        playlistInput.value = JSON.stringify(window.playlist);
+    });
 
 </script>

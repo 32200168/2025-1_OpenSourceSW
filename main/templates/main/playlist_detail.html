@@ -44,33 +44,29 @@
       <h2 class="text-2xl font-bold mb-3 text-white">🎵 곡 목록</h2>
       <ul class="space-y-4">
         {% for item in songs %}
-        <li class="bg-white/10 p-4 rounded-lg">
-          <p class="text-lg font-semibold text-white">{{ item.song.title }}</p>
-          <p class="text-sm text-gray-300">
-            아티스트: {{ item.song.artist.name }}<br>
-            앨범: {{ item.song.album.title }} ({{ item.song.album.release_date }})<br>
-            장르: {{ item.song.genre.name }}
-          </p>
+        <li class="bg-white/10 p-4 rounded-lg flex items-center space-x-4">
+          <img src="{{ item.song.image }}" alt="앨범아트"
+            class="w-16 h-16 rounded-lg object-cover shadow-md border border-white/30">
+          <div>
+            <a href="{{ item.song.url }}" target="_blank" class="text-lg font-semibold text-white hover:underline">
+              {{ item.song.title }}
+            </a>
+            <p class="text-sm text-gray-200">
+              아티스트: {{ item.song.artist.name }}
+            </p>
+            {% if item.song.embed %}
+            <div class="mt-2">
+              <iframe src="{{ item.song.embed }}" width="240" height="80" frameborder="0" allowtransparency="true"
+                allow="encrypted-media"></iframe>
+            </div>
+            {% endif %}
+          </div>
         </li>
         {% empty %}
         <li class="text-white">곡이 없습니다.</li>
         {% endfor %}
       </ul>
     </div>
-
-    <ul class="space-y-2">
-      {% for song in playlist.songs.all %}
-      <li class="bg-gray-100/10 p-2 rounded-lg flex items-center space-x-2">
-        <img src="{{ song.album_art_url|default:'https://cdn.startupful.io/img/app_logo/no_img.png' }}"
-          class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
-        <div>
-          <h3 class="text-sm font-semibold">{{ song.title }}</h3>
-          <p class="text-xs text-gray-200">{{ song.artist }}</p>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
-
 
     <script>
       let liked = false;

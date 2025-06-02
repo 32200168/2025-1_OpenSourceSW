@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 import json
 from playlist.models import Playlist, Hashtag, PlaylistSong
-from music.models import Song
+from music.models import Artist, Song
 from users.models import UserTaste
 from django.views.decorators.csrf import csrf_exempt
 import spotipy
@@ -147,16 +147,15 @@ def recommendation_view(request):
     return render(request, 'main/recommendation.html', {'playlist': dummy_playlist})
 
 
-
 def hashtag_search_view(request):
     selected_tags = request.GET.getlist('hashtags')
     tags = Hashtag.objects.all()  # 전체 태그 for 버튼
-    if selected_tags:   
+    if selected_tags:
         results = Playlist.objects.all()
         for tag in selected_tags:
             results = results.filter(hashtags__name=tag)
     else:
-        results = None  # 혹은 Playlist.objects.none()
+        results = None  # or Playlist.objects.none()
 
     return render(request, 'main/search_hashtag.html', {
         'tags': tags,
@@ -168,42 +167,49 @@ def hashtag_search_view(request):
 def create_playlist(request):
     if request.method == 'POST':
         title = request.POST.get("playlistName")
-        song_ids_json = request.POST.get("playlistData")
+        song_data_json = request.POST.get("playlistData")
         hashtag_list = request.POST.getlist("hashtags")
 
-        # 필수 체크
-        if not title or not song_ids_json:
+        if not title or not song_data_json:
             return render(request, 'main/main.html', {
                 'error': '제목과 곡을 입력하세요.'
             })
 
         try:
-            song_ids = json.loads(song_ids_json)
+            song_data = json.loads(song_data_json)
         except json.JSONDecodeError:
             return render(request, 'main/main.html', {
                 'error': '곡 정보가 잘못되었습니다.'
             })
 
-        # Playlist 저장
         playlist = Playlist.objects.create(owner=request.user, title=title)
 
-        song_data_json = request.POST.get("playlistData")  # ← 곡 리스트 객체가 담긴 JSON
-        song_data = json.loads(song_data_json)
+        for order, song_obj in enumerate(song_data):
+            # 아티스트 처리
+            artist_name = song_obj['artist']
+            artist, _ = Artist.objects.get_or_create(name=artist_name, defaults={'detail': ''})
 
-        song_ids = [song_obj['id'] for song_obj in song_data]
-        songs = Song.objects.filter(id__in=song_ids)
-
-        for order, song in enumerate(songs):
+            song, _ = Song.objects.get_or_create(
+                id=song_obj['id'],
+                defaults={
+                    'title': song_obj['title'],
+                    'artist': artist,
+                    'image': song_obj.get('image', ''),
+                    'url': song_obj.get('url', ''),
+                    'embed': song_obj.get('embed', ''),
+                }
+            )
             PlaylistSong.objects.create(playlist=playlist, song=song, order=order)
-
 
         for tag_name in hashtag_list:
             tag, _ = Hashtag.objects.get_or_create(name=tag_name)
             playlist.hashtags.add(tag)
 
-        return redirect('main')  # 저장 후 리다이렉트
+        return redirect('main')
 
     return render(request, 'main/main.html')
+
+
 
 load_dotenv()
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
