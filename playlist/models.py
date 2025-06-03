@@ -41,7 +41,25 @@ class Like(models.Model):
     class Meta:
         unique_together = ('playlist', 'user')
 
+
+class PlaylistTaste(models.Model):
+    playlist = models.OneToOneField('playlist.Playlist', on_delete=models.CASCADE)
+    hashtags = models.ManyToManyField(
+        'playlist.Hashtag',
+        through='PlaylistHashtagScore',
+        related_name='playlist_tastes'
+    )
+
+    def __str__(self):
+        return f"{self.playlist.title}의 취향 점수"
+
 class PlaylistHashtagScore(models.Model):
-    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
-    hashtag = models.ForeignKey(Hashtag, on_delete=models.CASCADE)
-    score = models.IntegerField(default=1)
+    playlist_taste = models.ForeignKey(PlaylistTaste, on_delete=models.CASCADE)
+    hashtag = models.ForeignKey('playlist.Hashtag', on_delete=models.CASCADE)
+    score = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('playlist_taste', 'hashtag')
+
+    def __str__(self):
+        return f"{self.playlist_taste.playlist.title} - #{self.hashtag.name} ({self.score}점)"

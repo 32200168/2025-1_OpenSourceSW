@@ -10,7 +10,7 @@ from django.http import JsonResponse
 import json
 from users.models import Profile
 
-from playlist.models import Playlist, Hashtag, PlaylistSong
+from playlist.models import Playlist, Hashtag, PlaylistSong, PlaylistTaste
 from music.models import Artist, Song
 from users.models import UserHashtagScore, UserTaste
 from django.views.decorators.csrf import csrf_exempt
@@ -236,10 +236,12 @@ def create_playlist(request):
             score_obj.save()
 
             # 플레이리스트 점수 저장
+            playlist_taste, _ = PlaylistTaste.objects.get_or_create(playlist=playlist)
+
             pl_score, pl_created = PlaylistHashtagScore.objects.get_or_create(
-                playlist=playlist,
-                hashtag=tag
-            )
+            playlist_taste=playlist_taste,
+            hashtag=tag
+        )
             if not pl_created:
                 pl_score.score += 1
             pl_score.save()
