@@ -4,24 +4,13 @@
 
   <div class="flex items-start gap-6">
     <!-- 프로필 이미지 -->
-    <img src="{% static 'profile_pic/default.jpg' %}" alt="profile" class="w-24 h-24 rounded-lg object-cover">
+    <img src="{% static 'profile_pic/default.png' %}" alt="profile" class="w-24 h-24 rounded-lg object-cover">
 
     <!-- 오른쪽 정보 -->
     <div class="flex-1 text-left">
       <!-- 사용자 이름 -->
       <h2 class="text-3xl font-semibold text-white">@
-        {{ request.user.username }}</h2>
-
-      {% if hashtags %}
-      {% for tag in hashtags %}
-      <span class="px-3 py-1 text-sm rounded-full bg-white/20 text-white font-medium mr-2 mb-2">
-        #{{ tag.name }}
-      </span>
-      {% endfor %}
-      {% else %}
-      <span class="text-white text-sm">저장된 취향이 없습니다.</span>
-      {% endif %}
-
+      {{ request.user.username }}</h2>
 
       <!-- 팔로잉/팔로워 -->
       <div class="flex gap-6 mt-1">
@@ -73,23 +62,35 @@
     </div>
 
 
-    <!-- 좋아요한 플레이리스트 -->
-    <div id="likedPL" class="pl-tab hidden">
-      <ul class="space-y-2">
+   <!-- 좋아요한 플레이리스트 -->
+<div id="likedPL" class="pl-tab hidden">
+  <ul class="space-y-2">
+    {% for playlist in liked_playlists %}
+      <li class="bg-gray-200/20 p-3 rounded text-white hover:bg-white/30">
+        <a href="{% url 'playlist_detail' playlist_id=playlist.id %}" class="block w-full h-full">
+          ❤️ {{ playlist.title }}
+        </a>
+      </li>
+    {% empty %}
+      <li class="text-white">좋아요한 플레이리스트가 없습니다.</li>
+    {% endfor %}
+  </ul>
+</div>
 
-        <li class="bg-gray-200/20 p-3 rounded text-white hover:bg-white/30">
-          <a href="{% url 'playlist_detail' playlist_id=3 %}" class="block w-full h-full">
-            ❤️ Liked Playlist A
-          </a>
-        </li>
-        <li class="bg-gray-200/20 p-3 rounded text-white hover:bg-white/30">
-          <a href="{% url 'playlist_detail' playlist_id=4 %}" class="block w-full h-full">
-            ❤️ Liked Playlist B
-          </a>
-        </li>
-      </ul>
-    </div>
 
   </div>
+
+<script>
+  function showPLTab(tabId) {
+    const tabs = document.querySelectorAll('.pl-tab');
+    tabs.forEach(tab => tab.classList.add('hidden'));
+
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) {
+      activeTab.classList.remove('hidden');
+    }
+  }
+</script>
+
 </div>
 </div>

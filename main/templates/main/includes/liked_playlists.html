@@ -1,0 +1,13 @@
+{% for pl in liked_playlists %}
+<div class="mb-4 p-4 rounded-lg bg-white bg-opacity-10 cursor-pointer" onclick="location.href='/main/playlist/{{ pl.id }}/'">
+  <h3 class="text-lg font-bold">{{ pl.title }}</h3>
+  <p>
+    {% for tag in pl.hashtags.all %}
+      <span class="text-sm text-white">#{{ tag.name }}</span>
+    {% endfor %}
+  </p>
+  <p class="text-gray-200 text-sm">by @{{ pl.owner.username }}</p>
+</div>
+{% empty %}
+<p class="text-center text-white">좋아요한 플레이리스트가 없습니다.</p>
+{% endfor %}

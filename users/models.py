@@ -21,4 +21,3 @@ class UserTaste(models.Model):
 
     def __str__(self):
         return f"{self.user.username}의 취향"
-

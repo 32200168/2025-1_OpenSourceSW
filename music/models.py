@@ -1,18 +1,21 @@
 from django.db import models
 
-#장르: 장르명
-class Genre(models.Model): 
-    name = models.CharField(max_length=50)
-
-#가수: 가수명, 소개
 class Artist(models.Model):
     name = models.CharField(max_length=100)
     detail = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f"{self.name}"
 
-#곡: 곡명, 재생시간, 가수, 앨범, 장르, 발매일
 class Song(models.Model):
-    title = models.CharField(max_length=100)
-    duration = models.DurationField()
+    # Spotify 트랙 ID (unique)
+    id = models.CharField(max_length=40, primary_key=True)  # 스포티파이 트랙 id 직접 사용
+    title = models.CharField(max_length=200)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
-    genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    image = models.URLField(max_length=300, blank=True, null=True)  # 앨범 아트
+    url = models.URLField(max_length=300, blank=True, null=True)    # 스포티파이 곡 URL
+    embed = models.URLField(max_length=300, blank=True, null=True)  # 임베드 URL
+    # duration, genre, album 등 필요시 추가 가능
+
+    def __str__(self):
+        return f"{self.title} - {self.artist.name}"

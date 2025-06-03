@@ -8,9 +8,16 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import JsonResponse
 import json
+from users.models import Profile
+
 from playlist.models import Playlist, Hashtag, PlaylistSong
-from music.models import Song
+from music.models import Artist, Song
 from users.models import UserTaste
+from django.views.decorators.csrf import csrf_exempt
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+import os
+from dotenv import load_dotenv
 
 
 
@@ -18,6 +25,12 @@ from users.models import UserTaste
 def main_view(request):
     playlist_count = Playlist.objects.filter(owner=request.user).count()
     my_playlists = Playlist.objects.filter(owner=request.user)
+    user = request.user
+
+
+    liked_playlists = Playlist.objects.filter(likes__user=user).distinct()
+
+
 
     # 유저 취향 가져오기
     try:
@@ -33,22 +46,28 @@ def main_view(request):
         'playlist_count': playlist_count,
         'my_playlists': my_playlists,
         'hashtags': hashtags,  # ✅ 추가
-    })
+        'liked_playlists': liked_playlists,
+}
+)
 
 
 
 def playlist_detail(request, playlist_id):
     playlist = get_object_or_404(Playlist, id=playlist_id)
-
-    # PlaylistSong을 order 순서대로 가져오기
     songs = PlaylistSong.objects.filter(playlist=playlist).select_related('song').order_by('order')
+    hashtags = playlist.hashtags.all()
 
-    hashtags = playlist.hashtags.all()  # 🔥 반드시 .all()
+    # ✅ 좋아요 상태 추가
+    is_liked = False
+    if request.user.is_authenticated:
+        from playlist.models import Like
+        is_liked = Like.objects.filter(user=request.user, playlist=playlist).exists()
 
     return render(request, 'main/playlist_detail.html', {
         'playlist': playlist,
         'songs': songs,
-        'hashtags': hashtags
+        'hashtags': hashtags,
+        'is_liked': is_liked,  # ✅ 꼭 넘겨야 함
     })
 
 
@@ -142,68 +161,188 @@ def recommendation_view(request):
     return render(request, 'main/recommendation.html', {'playlist': dummy_playlist})
 
 
-
 def hashtag_search_view(request):
     selected_tags = request.GET.getlist('hashtags')
-    tags = Hashtag.objects.all()  # 모든 해시태그
-
+    tags = Hashtag.objects.all().distinct()
     if selected_tags:
-        # selected_tags 리스트에 해당하는 모든 플레이리스트 가져오기
         results = Playlist.objects.all()
         for tag in selected_tags:
             results = results.filter(hashtags__name=tag)
-        results = results.distinct()
     else:
-        results = Playlist.objects.none()
-
-    return render(request, 'main/search_hashtag.html', {
+        results = None
+    return render(request, 'main/main.html', {
         'tags': tags,
         'selected_tags': selected_tags,
         'results': results,
     })
+
+def hashtag_search_ajax(request):
+    selected_tags = request.GET.getlist('hashtags')
+    results = []
+    if selected_tags:
+        playlists = Playlist.objects.all()
+        for tag in selected_tags:
+            playlists = playlists.filter(hashtags__name=tag)
+        for playlist in playlists:
+            results.append({
+                'id': playlist.id,
+                'title': playlist.title,
+                'owner': playlist.owner.username,
+                'hashtags': [tag.name for tag in playlist.hashtags.all()],
+            })
+    return JsonResponse({'results': results})
 
 
 @login_required
 def create_playlist(request):
     if request.method == 'POST':
         title = request.POST.get("playlistName")
-        song_ids_json = request.POST.get("playlistData")
+        song_data_json = request.POST.get("playlistData")
         hashtag_list = request.POST.getlist("hashtags")
 
-        # 필수 체크
-        if not title or not song_ids_json:
+        if not title or not song_data_json:
             return render(request, 'main/main.html', {
                 'error': '제목과 곡을 입력하세요.'
             })
 
         try:
-            song_ids = json.loads(song_ids_json)
+            song_data = json.loads(song_data_json)
         except json.JSONDecodeError:
             return render(request, 'main/main.html', {
                 'error': '곡 정보가 잘못되었습니다.'
             })
 
-        # Playlist 저장
         playlist = Playlist.objects.create(owner=request.user, title=title)
 
-        song_data_json = request.POST.get("playlistData")  # ← 곡 리스트 객체가 담긴 JSON
-        song_data = json.loads(song_data_json)
+        for order, song_obj in enumerate(song_data):
+            # 아티스트 처리
+            artist_name = song_obj['artist']
+            artist, _ = Artist.objects.get_or_create(name=artist_name, defaults={'detail': ''})
 
-        song_ids = [song_obj['id'] for song_obj in song_data]
-        songs = Song.objects.filter(id__in=song_ids)
-
-        for order, song in enumerate(songs):
+            song, _ = Song.objects.get_or_create(
+                id=song_obj['id'],
+                defaults={
+                    'title': song_obj['title'],
+                    'artist': artist,
+                    'image': song_obj.get('image', ''),
+                    'url': song_obj.get('url', ''),
+                    'embed': song_obj.get('embed', ''),
+                }
+            )
             PlaylistSong.objects.create(playlist=playlist, song=song, order=order)
-
 
         for tag_name in hashtag_list:
             tag, _ = Hashtag.objects.get_or_create(name=tag_name)
             playlist.hashtags.add(tag)
 
-        return redirect('main')  # 저장 후 리다이렉트
+        return redirect('main')
 
     return render(request, 'main/main.html')
 
+
+
+load_dotenv()
+sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
+    client_id=os.getenv('SPOTIPY_CLIENT_ID'),
+    client_secret=os.getenv('SPOTIPY_CLIENT_SECRET')
+))
+# Spotify 검색 API
+@csrf_exempt
+def spotify_search(request):
+    query = request.GET.get("q", "")
+    if not query:
+        return JsonResponse({"results": []})
+
+    results = sp.search(q=query, type='track', limit=10)
+    tracks = []
+    for item in results['tracks']['items']:
+        tracks.append({
+            'title': item['name'],
+            'artist': item['artists'][0]['name'],
+            'image': item['album']['images'][0]['url'],
+            'url': item['external_urls']['spotify'],
+            'id': item['id'],
+            'embed': f"https://open.spotify.com/embed/track/{item['id']}"
+        })
+    return JsonResponse({'results': tracks})
+
+
 @login_required
-def playlist_from_main(request):
-    return render(request, 'playlist.html')  # 혹은 'main/playlist.html' 경로에 따라 조정
+def delete_playlist(request, playlist_id):
+    playlist = get_object_or_404(Playlist, id=playlist_id)
+
+    if playlist.owner != request.user:
+        raise Http404("삭제 권한이 없습니다.")
+
+@login_required
+def user_profile_view(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=profile_user)  # Profile 인스턴스 가져오기
+
+    playlists = Playlist.objects.filter(owner=profile_user)
+    playlist_count = playlists.count()
+
+    follower_count = profile.followers.count()
+    following_count = profile.following.count()
+
+    return render(request, 'main/profile_page.html', {
+        'profile_user': profile_user,
+        'is_own_profile': request.user == profile_user,
+        'playlists': playlists,
+        'playlist_count': playlist_count,
+        'follower_count': follower_count,
+        'following_count': following_count,
+    })
+
+from django.http import JsonResponse
+from playlist.models import Like, Playlist
+
+
+@login_required
+def toggle_like(request, playlist_id):
+    if request.method == 'POST':
+        playlist = get_object_or_404(Playlist, id=playlist_id)
+        user = request.user
+
+        like, created = Like.objects.get_or_create(user=user, playlist=playlist)
+
+        if not created:
+            like.delete()
+            liked = False
+        else:
+            liked = True
+
+        return JsonResponse({
+            'liked': liked,
+            'like_count': playlist.likes.count(),  # related_name='likes' 필요
+        })
+
+    # POST 아닌 요청이면 405 에러 반환
+    return JsonResponse({'error': 'Invalid request'}, status=405)
+
+@login_required
+def liked_playlists_view(request):
+    # 현재 로그인한 사용자가 좋아요한 플레이리스트 목록 가져오기
+    liked_playlists = Playlist.objects.filter(likes__user=request.user).distinct()
+
+    return render(request, 'main/main.html', {
+        'tab': 'liked',
+        'liked_playlists': liked_playlists,
+    })
+
+from playlist.models import Playlist, Like
+
+@login_required
+def profile_view(request):
+    user = request.user
+    my_playlists = Playlist.objects.filter(owner=user)
+    liked_playlists = Playlist.objects.filter(likes__user=user).distinct()
+
+    return render(request, 'main/includes/profile_section.html', {
+        'my_playlists': my_playlists,
+        'liked_playlists': liked_playlists,
+        'playlist_count': my_playlists.count(),
+    })
+
+
+

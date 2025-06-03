@@ -1,18 +1,24 @@
 from django.urls import path
-from .views import (
-    main_view,
-    create_playlist,
-    playlist_detail,
-    recommendation_view,
-    hashtag_search_view,
-    playlist_from_main
-)
+from .views import create_playlist, hashtag_search_view, playlist_detail,liked_playlists_view, profile_view
+from . import views
 
 urlpatterns = [
-    path('', main_view, name='main'),
+    path('', views.main_view, name='main'),
+    path('playlist/<int:playlist_id>/', views.playlist_detail, name='playlist_detail'),
+    path('recommend/', views.recommendation_view, name='recommendation'),
+    path('search/', views.hashtag_search_view, name='search'),
     path('playlist/', create_playlist, name='create_playlist'),
     path('playlist/<int:playlist_id>/', playlist_detail, name='playlist_detail'),
-    path('recommend/', recommendation_view, name='recommendation'),
-    path('search/', hashtag_search_view, name='search'),
-    path('', playlist_from_main, name='main_playlist'),  # http://127.0.0.1:8000/main/
+    path("api/search/", views.spotify_search, name="spotify_search"),
+    path('api/search_hashtag/', views.hashtag_search_ajax, name='hashtag_search_ajax'),
+    path('playlist/<int:playlist_id>/', views.playlist_detail, name='playlist_detail'),
+    path('playlist/<int:playlist_id>/delete/', views.delete_playlist, name='delete_playlist'),
+    path('profile/<str:username>/', views.user_profile_view, name='user_profile'),
+    path('playlist/<int:playlist_id>/like/', views.toggle_like, name='toggle_like'),
+    path('liked/', liked_playlists_view, name='liked_playlists'),
+    path('profile/', profile_view, name='profile_view'),
+    
+
+
 ]
+
