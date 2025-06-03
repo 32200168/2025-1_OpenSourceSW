@@ -45,8 +45,8 @@
         <div class="flex items-center justify-between mb-4">
             <div class="flex items-center space-x-2">
                 <i class="fas fa-pencil-alt text-white"></i>
-                <input id="playlistName" name="playlistName" type="text" value="My Playlist"
-                    class="bg-transparent border-white text-white font-semibold text-lg focus:outline-none focus:border-white" />
+                <input id="playlistName" name="playlistName" type="text" placeholder="플레이리스트 이름"
+                    class="bg-transparent border-white text-white placeholder-gray-300 font-semibold text-lg focus:outline-none focus:border-white" />
             </div>
         </div> <!-- 태그 선택 페이지에 연결 -->
 
@@ -442,7 +442,7 @@
     }
 
     form.addEventListener("submit", function (e) {
-        // 유효성 검사(3곡 이상, 해시태그 3개 이상) 생략
+        // 유효성 검사(3곡 이상, 해시태그 3개 이상) 생
         playlistInput.value = JSON.stringify(window.playlist);
     });
 

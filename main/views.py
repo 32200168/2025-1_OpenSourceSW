@@ -10,6 +10,9 @@ from django.http import JsonResponse
 import json
 from users.models import Profile
 
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
 from playlist.models import Playlist, Hashtag, PlaylistSong, PlaylistTaste
 from music.models import Artist, Song
 from users.models import UserHashtagScore, UserTaste
@@ -61,46 +64,6 @@ def playlist_detail(request, playlist_id):
     })
 
 
-mock_playlists = {
-    1: {
-        'title': 'My Playlist 1',
-        'creator': '내 아이디',
-        'hashtags': ['K-POP', '랩/힙합', '발라드'],
-        'songs': [
-            { 'title': '노래 A', 'artist': '아티스트 A', 'album_art_url': 'https://cdn.startupful.io/img/app_logo/no_img.png' },
-            { 'title': '노래 B', 'artist': '아티스트 B', 'album_art_url': 'https://cdn.startupful.io/img/app_logo/no_img.png' }
-        ]
-    },
-    2: {
-        'title': 'My Playlist 2',
-        'creator': '내 아이디',
-        'hashtags': ['K-POP', '랩/힙합', '발라드'],
-        'songs': [
-            { 'title': '노래 C', 'artist': '아티스트 C', 'album_art_url': 'https://cdn.startupful.io/img/app_logo/no_img.png' },
-            { 'title': '노래 D', 'artist': '아티스트 D', 'album_art_url': 'https://cdn.startupful.io/img/app_logo/no_img.png' }
-        ]
-    },
-    3: {
-        'title': 'Liked Playlist A',
-        'creator': 'user_2',
-        'hashtags': ['인디', '차분한', '잔잔한'],
-        'songs': [
-            { 'title': '노래 E', 'artist': '아티스트 E', 'album_art_url': 'https://cdn.startupful.io/img/app_logo/no_img.png' },
-            { 'title': '노래 F', 'artist': '아티스트 F', 'album_art_url': 'https://cdn.startupful.io/img/app_logo/no_img.png' }
-        ]
-    },
-    4: {
-        'title': 'Liked Playlist B',
-        'creator': 'user_3',
-        'hashtags': ['랩/힙합', '발라드'],
-        'songs': [
-            { 'title': '노래 G', 'artist': '아티스트 G', 'album_art_url': 'https://cdn.startupful.io/img/app_logo/no_img.png' },
-            { 'title': '노래 H', 'artist': '아티스트 H', 'album_art_url': 'https://cdn.startupful.io/img/app_logo/no_img.png' }
-        ]
-    },
-}
-
-
 def playlist_view(request):
     if request.method == "POST":
         songs_json = request.POST.get("songs", "[]")
@@ -137,18 +100,64 @@ def playlist_view(request):
 
 
 
+
+@login_required
 def recommendation_view(request):
-    dummy_playlist = {
-        'title': '감성적인 밤에 듣는 플레이리스트',
-        'creator': 'test_user',
-        'hashtags': ['잔잔한', '감성', '밤'],
-        'songs': [
-            {'title': '밤편지', 'artist': '아이유', 'album_art_url': ''},
-            {'title': '너를 그린다', 'artist': '정키', 'album_art_url': ''},
-            {'title': '이 밤', 'artist': '양다일', 'album_art_url': ''},
-        ]
-    }
-    return render(request, 'main/recommendation.html', {'playlist': dummy_playlist})
+    try:
+        user_taste = UserTaste.objects.get(user=request.user)
+    except UserTaste.DoesNotExist:
+        return render(request, 'main/recommendation.html', {'playlist': None})
+
+    # 사용자 해시태그 점수 가져오기
+    user_scores = UserHashtagScore.objects.filter(user_taste=user_taste)
+    if not user_scores.exists():
+        return render(request, 'main/recommendation.html', {'playlist': None})
+
+    all_hashtags = Hashtag.objects.all()
+    hashtag_index = {tag.id: idx for idx, tag in enumerate(all_hashtags)}
+
+    # 사용자 벡터 생성
+    user_vector = np.zeros(len(all_hashtags))
+    for score in user_scores:
+        idx = hashtag_index[score.hashtag.id]
+        user_vector[idx] = score.score
+
+    best_score = -1
+    best_playlist = None
+
+    for playlist in Playlist.objects.exclude(owner=request.user):
+        try:
+            playlist_taste = PlaylistTaste.objects.get(playlist=playlist)
+        except PlaylistTaste.DoesNotExist:
+            continue
+
+        pl_scores = PlaylistHashtagScore.objects.filter(playlist_taste=playlist_taste)
+        if not pl_scores.exists():
+            continue
+
+        pl_vector = np.zeros(len(all_hashtags))
+        for score in pl_scores:
+            idx = hashtag_index[score.hashtag.id]
+            pl_vector[idx] = score.score
+
+        # 코사인 유사도 계산
+        sim = cosine_similarity([user_vector], [pl_vector])[0][0]
+
+        print(f"\n=== {playlist.title} ===")
+        print("user_vector:", user_vector)
+        print("pl_vector:  ", pl_vector)
+        print("유사도:     ", cosine_similarity([user_vector], [pl_vector])[0][0])
+
+        if sim > best_score:
+            best_score = sim
+            best_playlist = playlist
+
+        if best_playlist:
+            return redirect('playlist_detail', playlist_id=best_playlist.id)
+        else:
+            return render(request, 'main/recommendation.html', {
+                'playlist': None
+            })
 
 
 def hashtag_search_view(request):
@@ -190,10 +199,9 @@ def create_playlist(request):
         song_data_json = request.POST.get("playlistData")
         hashtag_list = request.POST.getlist("hashtags")
 
-        if not title or not song_data_json:
-            return render(request, 'main/main.html', {
-                'error': '제목과 곡을 입력하세요.'
-            })
+        if not title:
+            count = Playlist.objects.count() + 1
+            title = f"Playlist#{count}"
 
         try:
             song_data = json.loads(song_data_json)
@@ -226,7 +234,7 @@ def create_playlist(request):
         for tag_name in hashtag_list:
             tag, _ = Hashtag.objects.get_or_create(name=tag_name)
 
-            # 사용자 점수 저장
+            # 사용자 점수 저장 (가중치 누적)
             score_obj, created = UserHashtagScore.objects.get_or_create(
                 user_taste=user_taste,
                 hashtag=tag
@@ -235,16 +243,13 @@ def create_playlist(request):
                 score_obj.score += 1
             score_obj.save()
 
-            # 플레이리스트 점수 저장
+            # 플레이리스트 점수 저장 (무조건 score = 1 고정)
             playlist_taste, _ = PlaylistTaste.objects.get_or_create(playlist=playlist)
-
-            pl_score, pl_created = PlaylistHashtagScore.objects.get_or_create(
-            playlist_taste=playlist_taste,
-            hashtag=tag
-        )
-            if not pl_created:
-                pl_score.score += 1
-            pl_score.save()
+            PlaylistHashtagScore.objects.update_or_create(
+                playlist_taste=playlist_taste,
+                hashtag=tag,
+                defaults={'score': 1}  # 항상 1로 설정
+            )
 
             # 태그 연결
             playlist.hashtags.add(tag)

@@ -32,14 +32,14 @@
 
     <div class="mt-3">
       <div class="flex flex-wrap gap-2 mb-5">
-        {% for tag in playlist.hashtags %}
+        {% for tag in playlist.hashtags.all %}
           <span class="px-3 py-1 rounded-full bg-white/10 text-sm text-white">#{{ tag }}</span>
         {% endfor %}
       </div>
     </div>
 
     <ul class="space-y-2">
-      {% for song in playlist.songs %}
+      {% for song in playlist.songs.all %}
         <li class="bg-gray-100/10 p-2 rounded-lg flex items-center space-x-2">
           <img src="{{ song.album_art_url|default:'https://cdn.startupful.io/img/app_logo/no_img.png' }}" class="h-10 w-10 rounded-lg object-cover" alt="앨범 아트">
           <div>
